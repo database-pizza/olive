@@ -1,0 +1,325 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────────────────────────────── */
+
+@theme {
+  /* Fonts */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", "Fira Code", monospace;
+
+  /* Olive primitive palette */
+  --color-olive-50:  hsl(75 60% 96%);
+  --color-olive-100: hsl(75 60% 90%);
+  --color-olive-200: hsl(75 58% 78%);
+  --color-olive-300: hsl(75 56% 66%);
+  --color-olive-400: hsl(75 58% 54%);
+  --color-olive-500: hsl(75 60% 44%);
+  --color-olive-600: hsl(75 55% 38%);
+  --color-olive-700: hsl(75 50% 32%);
+  --color-olive-800: hsl(75 45% 24%);
+  --color-olive-900: hsl(75 40% 16%);
+
+  /* Border radius */
+  --radius: 0.75rem;        /* 12px — cards, panels, inputs */
+  --radius-button: 0.4375rem; /* 7px  — buttons specifically */
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-full: 9999px;
+
+  /* Motion */
+  --duration-micro:  100ms;
+  --duration-fast:   150ms;
+  --duration-base:   200ms;
+  --duration-slow:   250ms;
+  --duration-page:   350ms;
+
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit:  cubic-bezier(0.4, 0, 1, 1);
+  --ease-move:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ─── Semantic color variables ──────────────────────────────────────────── */
+
+:root {
+  --background:          hsl(60 8% 95%);
+  --foreground:          hsl(70 8% 15%);
+
+  --card:                hsl(60 6% 97%);
+  --card-foreground:     hsl(70 8% 15%);
+
+  --muted:               hsl(65 8% 91%);
+  --muted-foreground:    hsl(70 4% 45%);
+
+  --border:              hsl(65 6% 86%);
+
+  --primary:             hsl(75 60% 44%);
+  --primary-foreground:  hsl(70 8% 15%);
+
+  --destructive:         hsl(0 55% 52%);
+  --destructive-foreground: hsl(0 0% 98%);
+
+  --ring:                hsl(75 60% 44%);
+
+  --shadow-sm: 0 1px 2px hsl(70 8% 15% / 0.06);
+  --shadow-md: 0 4px 12px hsl(70 8% 15% / 0.08);
+  --shadow-lg: 0 8px 24px hsl(70 8% 15% / 0.10);
+}
+
+.dark {
+  --background:          hsl(70 4% 9%);
+  --foreground:          hsl(60 8% 85%);
+
+  --card:                hsl(70 4% 11%);
+  --card-foreground:     hsl(60 8% 85%);
+
+  --muted:               hsl(70 4% 15%);
+  --muted-foreground:    hsl(65 4% 50%);
+
+  --border:              hsl(70 4% 18%);
+
+  --primary:             hsl(75 55% 52%);
+  --primary-foreground:  hsl(70 4% 9%);
+
+  --destructive:         hsl(0 45% 42%);
+  --destructive-foreground: hsl(0 0% 98%);
+
+  --ring:                hsl(75 55% 52%);
+
+  --shadow-sm: 0 1px 2px hsl(70 4% 4% / 0.4);
+  --shadow-md: 0 4px 12px hsl(70 4% 4% / 0.5);
+  --shadow-lg: 0 8px 24px hsl(70 4% 4% / 0.6);
+}
+
+/* ─── Tailwind v4 CSS variable bridge ───────────────────────────────────── */
+/*
+   Tailwind v4 uses @theme for its utility generation, but our semantic tokens
+   live in :root/:dark. We bridge them here so Tailwind utilities like
+   bg-background, text-foreground etc. work correctly.
+*/
+
+@theme inline {
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-card:               var(--card);
+  --color-card-foreground:    var(--card-foreground);
+  --color-muted:              var(--muted);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-border:             var(--border);
+  --color-primary:            var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-destructive:        var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring:               var(--ring);
+}
+
+/* ─── Base styles ───────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  min-height: 100dvh;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Badge semantic classes ─────────────────────────────────────────────── */
+/*
+  Light mode: solid-ish tinted backgrounds — enough opacity to be distinct
+  against the warm off-white canvas. Borders are full-opacity, slightly deeper
+  than the bg.
+  Dark mode: keeps the semi-transparent glow approach that works so well.
+*/
+
+.badge-active {
+  background-color: hsl(160 55% 88%);
+  color: hsl(160 70% 24%);
+  border-color: hsl(160 50% 76%);
+}
+.dark .badge-active {
+  background-color: hsl(160 84% 39% / 0.15);
+  color: hsl(160 70% 58%);
+  border-color: hsl(160 84% 39% / 0.32);
+}
+
+.badge-paused {
+  background-color: hsl(38 80% 88%);
+  color: hsl(38 80% 26%);
+  border-color: hsl(38 70% 74%);
+}
+.dark .badge-paused {
+  background-color: hsl(38 92% 50% / 0.15);
+  color: hsl(38 92% 68%);
+  border-color: hsl(38 92% 50% / 0.32);
+}
+
+.badge-error {
+  background-color: hsl(0 70% 92%);
+  color: hsl(0 65% 34%);
+  border-color: hsl(0 60% 80%);
+}
+.dark .badge-error {
+  background-color: hsl(0 72% 51% / 0.15);
+  color: hsl(0 72% 70%);
+  border-color: hsl(0 72% 51% / 0.32);
+}
+
+.badge-warning {
+  background-color: hsl(38 80% 88%);
+  color: hsl(38 80% 22%);
+  border-color: hsl(38 70% 74%);
+}
+.dark .badge-warning {
+  background-color: hsl(38 92% 50% / 0.15);
+  color: hsl(38 92% 68%);
+  border-color: hsl(38 92% 50% / 0.32);
+}
+
+.badge-info {
+  background-color: hsl(199 70% 90%);
+  color: hsl(199 80% 26%);
+  border-color: hsl(199 60% 78%);
+}
+.dark .badge-info {
+  background-color: hsl(199 89% 48% / 0.15);
+  color: hsl(199 89% 68%);
+  border-color: hsl(199 89% 48% / 0.32);
+}
+
+.badge-debug {
+  background-color: hsl(271 60% 92%);
+  color: hsl(271 65% 34%);
+  border-color: hsl(271 50% 80%);
+}
+.dark .badge-debug {
+  background-color: hsl(271 81% 56% / 0.15);
+  color: hsl(271 81% 72%);
+  border-color: hsl(271 81% 56% / 0.32);
+}
+
+.badge-trace {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  border-color: var(--border);
+}
+
+.badge-write {
+  background-color: hsl(199 70% 90%);
+  color: hsl(199 80% 26%);
+  border-color: hsl(199 60% 78%);
+}
+.dark .badge-write {
+  background-color: hsl(199 89% 48% / 0.15);
+  color: hsl(199 89% 68%);
+  border-color: hsl(199 89% 48% / 0.32);
+}
+
+.badge-delete {
+  background-color: hsl(0 70% 92%);
+  color: hsl(0 65% 34%);
+  border-color: hsl(0 60% 80%);
+}
+.dark .badge-delete {
+  background-color: hsl(0 72% 51% / 0.15);
+  color: hsl(0 72% 70%);
+  border-color: hsl(0 72% 51% / 0.32);
+}
+
+
+/* ─── Alert semantic classes ─────────────────────────────────────────────── */
+/*
+  Same approach as badges:
+  Light: solid tinted backgrounds, rich text for legibility on the warm off-white canvas.
+  Dark:  semi-transparent glows — the color shines through the dark background.
+*/
+
+.alert-info {
+  background-color: hsl(199 70% 90%);
+  border-color: hsl(199 60% 78%);
+  color: hsl(199 80% 22%);
+}
+.dark .alert-info {
+  background-color: hsl(199 89% 48% / 0.12);
+  border-color: hsl(199 89% 48% / 0.28);
+  color: hsl(199 80% 72%);
+}
+
+.alert-success {
+  background-color: hsl(160 55% 88%);
+  border-color: hsl(160 50% 74%);
+  color: hsl(160 70% 20%);
+}
+.dark .alert-success {
+  background-color: hsl(160 84% 39% / 0.12);
+  border-color: hsl(160 84% 39% / 0.28);
+  color: hsl(160 60% 62%);
+}
+
+.alert-warning {
+  background-color: hsl(45 90% 88%);
+  border-color: hsl(38 80% 72%);
+  color: hsl(38 80% 22%);
+}
+.dark .alert-warning {
+  background-color: hsl(38 92% 50% / 0.12);
+  border-color: hsl(38 92% 50% / 0.28);
+  color: hsl(38 90% 68%);
+}
+
+.alert-error {
+  background-color: hsl(0 70% 92%);
+  border-color: hsl(0 60% 78%);
+  color: hsl(0 65% 28%);
+}
+.dark .alert-error {
+  background-color: hsl(0 72% 51% / 0.12);
+  border-color: hsl(0 72% 51% / 0.28);
+  color: hsl(0 72% 72%);
+}
+
+/* ─── Focus ring utility ─────────────────────────────────────────────────── */
+
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
