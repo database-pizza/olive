@@ -14,11 +14,12 @@
   interface Props {
     items: Item[];
     align?: 'start' | 'end';
+    side?: 'bottom' | 'top';
     class?: string;
     trigger?: Snippet;
   }
 
-  let { items, align = 'start', class: className = '', trigger }: Props = $props();
+  let { items, align = 'start', side = 'bottom', class: className = '', trigger }: Props = $props();
 
   let open = $state(false);
   let menuEl = $state<HTMLElement | null>(null);
@@ -59,7 +60,8 @@
     <div
       role="menu"
       class={cn(
-        'absolute top-full z-50 mt-1 min-w-[160px]',
+        'absolute z-50 mt-1 min-w-[160px]',
+        side === 'top' ? 'bottom-full mb-1' : 'top-full',
         'rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card)]',
         'shadow-[var(--shadow-md)] p-1',
         'animate-[fadeInScale_150ms_cubic-bezier(0.16,1,0.3,1)]',
