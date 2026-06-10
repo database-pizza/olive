@@ -23,7 +23,7 @@ npm install -D @sveltejs/package publint
 
 ```json
 {
-  "name": "olive-ui",
+  "name": "@database.pizza/olive",
   "version": "0.1.0",
   "scripts": {
     "dev": "vite dev",

@@ -29,13 +29,13 @@
     <div class="flex flex-col gap-4">
       <div>
         <p class="mb-2 text-sm font-medium text-[var(--foreground)]">1. Install the package</p>
-        <CodeBlock code={`npm install olive-ui`} language="sh" />
+        <CodeBlock code={`npm install @database.pizza/olive`} language="sh" />
       </div>
 
       <div>
         <p class="mb-2 text-sm font-medium text-[var(--foreground)]">2. Import the styles in your <code class="rounded bg-[var(--muted)] px-1 py-0.5 text-xs font-mono">app.css</code></p>
         <CodeBlock language="css" code={`@import 'tailwindcss';
-@import 'olive-ui/styles';`} />
+@import '@database.pizza/olive/styles';`} />
       </div>
 
       <div>
@@ -56,7 +56,7 @@
       <div>
         <p class="mb-2 text-sm font-medium text-[var(--foreground)]">4. Use components</p>
         <CodeBlock language="svelte" code={`<script>
-  import { Button, Input, Card } from 'olive-ui';
+  import { Button, Input, Card } from '@database.pizza/olive';
 <\/script>
 
 <Card>
@@ -78,7 +78,7 @@
       </p>
     </div>
 
-    <CodeBlock language="css" code={`/* In your app.css, after @import 'olive-ui/styles' */
+    <CodeBlock language="css" code={`/* In your app.css, after @import '@database.pizza/olive/styles' */
 :root {
   --primary: hsl(160 84% 39%);   /* your brand green */
   --radius: 10px;                 /* border radius for cards */
@@ -123,8 +123,8 @@
     </div>
     <CodeBlock code={`You are working with olive, a Svelte 5 component library built with Tailwind v4.
 
-Import components from 'olive-ui':
-  import { Button, Input, Card } from 'olive-ui';
+Import components from '@database.pizza/olive':
+  import { Button, Input, Card } from '@database.pizza/olive';
 
 Available components:
   Primitives:  Button, Input, Textarea, Label, Checkbox, Switch, Badge,
@@ -148,7 +148,7 @@ Conventions:
   - Svelte 5 runes: $state, $derived, $props, $bindable, snippets
   - Design tokens are CSS custom properties: --primary, --foreground,
     --border, --muted, --card, --radius, --radius-button, etc.
-  - Use cn() from 'olive-ui' to merge conditional classes
+  - Use cn() from '@database.pizza/olive' to merge conditional classes
   - Wrap inputs in FormField for consistent error/hint display
   - Mount <Toaster /> once in the root layout; call toast.add(),
     toast.success(), toast.warning(), toast.error() anywhere

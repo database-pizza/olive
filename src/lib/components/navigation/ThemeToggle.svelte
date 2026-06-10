@@ -32,6 +32,10 @@
   }
 
   $effect(() => {
+    applyTheme(theme);
+  });
+
+  $effect(() => {
     if (!browser) return;
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const handler = () => { if (theme === 'system') applyTheme('system'); };
