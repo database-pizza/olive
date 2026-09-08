@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import { getContext } from 'svelte';
   import { cn } from '$lib/utils/cn.js';
+  import { formFieldContext, type FormFieldContext } from '$lib/utils/form-field.js';
 
   interface Props {
     value?: string;
@@ -8,6 +10,8 @@
     id?: string;
     class?: string;
     error?: boolean;
+    'aria-describedby'?: string;
+    'aria-invalid'?: boolean | 'false' | 'true';
     children?: Snippet;
     onchange?: (value: string) => void;
   }
@@ -18,14 +22,19 @@
     id,
     class: className = '',
     error = false,
+    'aria-describedby': ariaDescribedby,
+    'aria-invalid': ariaInvalid,
     children,
     onchange,
   }: Props = $props();
+  const field = getContext<FormFieldContext | undefined>(formFieldContext);
 </script>
 
 <div class={cn('relative w-full', className)}>
   <select
-    {id}
+    id={id ?? field?.controlId}
+    aria-describedby={ariaDescribedby ?? field?.descriptionId}
+    aria-invalid={ariaInvalid ?? (field?.invalid ? 'true' : undefined)}
     {disabled}
     bind:value
     onchange={(e) => onchange?.((e.target as HTMLSelectElement).value)}
@@ -35,7 +44,7 @@
       'transition-colors duration-[150ms]',
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0',
       'cursor-pointer disabled:cursor-not-allowed disabled:opacity-40',
-      error
+      error || field?.invalid
         ? 'border-[var(--destructive)] focus-visible:ring-[var(--destructive)]'
         : 'border-[var(--border)] focus-visible:border-[var(--ring)]'
     )}

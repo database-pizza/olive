@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import { cn } from '$lib/utils/cn.js';
+  import { popupElement } from '$lib/utils/popup.js';
 
   type Side = 'top' | 'bottom' | 'left' | 'right';
 
@@ -16,6 +17,23 @@
 
   let visible = $state(false);
   let timer: ReturnType<typeof setTimeout>;
+  const componentId = $props.id();
+  const tooltipId = `${componentId}-tooltip`;
+
+  function describeTrigger(node: HTMLElement) {
+    const trigger = popupElement(node);
+    const previousDescription = trigger?.getAttribute('aria-describedby');
+    const description = [previousDescription, tooltipId].filter(Boolean).join(' ');
+    trigger?.setAttribute('aria-describedby', description);
+
+    return {
+      destroy() {
+        if (!trigger) return;
+        if (previousDescription) trigger.setAttribute('aria-describedby', previousDescription);
+        else trigger.removeAttribute('aria-describedby');
+      },
+    };
+  }
 
   function show() {
     timer = setTimeout(() => { visible = true; }, delay);
@@ -35,6 +53,7 @@
 </script>
 
 <div
+  use:describeTrigger
   role="group"
   class={cn('relative inline-flex', className)}
   onmouseenter={show}
@@ -44,26 +63,26 @@
 >
   {#if children}{@render children()}{/if}
 
-  {#if visible}
-    <div
-      role="tooltip"
-      class={cn(
-        'pointer-events-none absolute z-50 whitespace-nowrap',
-        'rounded-[calc(var(--radius)*0.67)] bg-[var(--foreground)] px-2.5 py-1',
-        'text-xs font-medium text-[var(--background)]',
-        'shadow-[var(--shadow-md)]',
-        'animate-[fadeInScale_150ms_cubic-bezier(0.16,1,0.3,1)]',
-        sideClasses[side],
-      )}
-    >
-      {content}
-    </div>
-  {/if}
+  <div
+    id={tooltipId}
+    role="tooltip"
+    hidden={!visible}
+    class={cn(
+      'pointer-events-none absolute z-50 whitespace-nowrap',
+      'rounded-[calc(var(--radius)*0.67)] bg-[var(--foreground)] px-2.5 py-1',
+      'text-xs font-medium text-[var(--background)]',
+      'shadow-[var(--shadow-md)]',
+      'animate-[tooltipIn_150ms_cubic-bezier(0.16,1,0.3,1)]',
+      sideClasses[side],
+    )}
+  >
+    {content}
+  </div>
 </div>
 
 <style>
-  @keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.92) translateX(-50%); }
-    to   { opacity: 1; transform: scale(1) translateX(-50%); }
+  @keyframes -global-tooltipIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 </style>

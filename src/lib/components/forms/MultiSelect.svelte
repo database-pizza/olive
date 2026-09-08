@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { getContext } from 'svelte';
   import { cn } from '$lib/utils/cn.js';
+  import { formFieldContext, type FormFieldContext } from '$lib/utils/form-field.js';
 
   interface Option {
     value: string;
@@ -12,6 +14,9 @@
     placeholder?: string;
     disabled?: boolean;
     error?: boolean;
+    id?: string;
+    'aria-label'?: string;
+    'aria-describedby'?: string;
     max?: number;
     class?: string;
     onchange?: (values: string[]) => void;
@@ -23,10 +28,18 @@
     placeholder = 'Select…',
     disabled = false,
     error = false,
+    id,
+    'aria-label': ariaLabel,
+    'aria-describedby': ariaDescribedby,
     max,
     class: className = '',
     onchange,
   }: Props = $props();
+  const field = getContext<FormFieldContext | undefined>(formFieldContext);
+  const componentId = $props.id();
+  const listboxId = `${componentId}-listbox`;
+  const selectedDescriptionId = `${componentId}-selection`;
+  let controlId = $derived(id ?? field?.controlId ?? `${componentId}-control`);
 
   let open = $state(false);
   let query = $state('');
@@ -41,6 +54,35 @@
   );
 
   let selectedOptions = $derived(options.filter(o => value.includes(o.value)));
+  let describedBy = $derived(
+    [ariaDescribedby ?? field?.descriptionId, value.length > 0 ? selectedDescriptionId : undefined]
+      .filter(Boolean)
+      .join(' ') || undefined
+  );
+
+  function optionDisabled(opt: Option) {
+    return !value.includes(opt.value) && !!max && value.length >= max;
+  }
+
+  function enabledIndexes() {
+    return filtered
+      .map((opt, index) => optionDisabled(opt) ? -1 : index)
+      .filter(index => index >= 0);
+  }
+
+  function moveActive(direction: 1 | -1) {
+    const indexes = enabledIndexes();
+    if (indexes.length === 0) {
+      activeIndex = -1;
+      return;
+    }
+    const current = indexes.indexOf(activeIndex);
+    if (!open || current === -1) {
+      activeIndex = direction === 1 ? indexes[0] : indexes[indexes.length - 1];
+      return;
+    }
+    activeIndex = indexes[Math.max(0, Math.min(indexes.length - 1, current + direction))];
+  }
 
   function toggle(opt: Option) {
     if (value.includes(opt.value)) {
@@ -59,15 +101,28 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') { open = false; return; }
+    if (e.key === 'Escape') { open = false; query = ''; return; }
     if (e.key === 'Backspace' && !query && value.length > 0) {
       value = value.slice(0, -1);
       onchange?.(value);
       return;
     }
-    if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = Math.min(activeIndex + 1, filtered.length - 1); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex = Math.max(activeIndex - 1, 0); }
-    if (e.key === 'Enter') { e.preventDefault(); if (filtered[activeIndex]) toggle(filtered[activeIndex]); }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      moveActive(1);
+      open = true;
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      moveActive(-1);
+      open = true;
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (open && filtered[activeIndex] && !optionDisabled(filtered[activeIndex])) toggle(filtered[activeIndex]);
+      else open = true;
+    }
+    if (e.key === 'Tab') open = false;
   }
 
   function handleOutside(e: MouseEvent) {
@@ -76,10 +131,15 @@
 
   $effect(() => {
     if (open) {
-      activeIndex = 0;
+      activeIndex = enabledIndexes()[0] ?? -1;
       document.addEventListener('click', handleOutside);
       return () => document.removeEventListener('click', handleOutside);
     }
+  });
+
+  $effect(() => {
+    query;
+    activeIndex = enabledIndexes()[0] ?? -1;
   });
 </script>
 
@@ -100,6 +160,7 @@
         {opt.label}
         <button
           type="button"
+          {disabled}
           onclick={(e) => { e.stopPropagation(); removeTag(opt.value); }}
           class="flex h-3.5 w-3.5 cursor-pointer items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
           aria-label="Remove {opt.label}"
@@ -113,20 +174,36 @@
 
     <input
       bind:this={inputEl}
+      id={controlId}
       type="text"
       {disabled}
       placeholder={value.length === 0 ? placeholder : ''}
       bind:value={query}
       onfocus={() => { open = true; }}
       onkeydown={handleKeydown}
+      role="combobox"
+      aria-label={ariaLabel}
+      aria-expanded={open}
+      aria-autocomplete="list"
+      aria-controls={listboxId}
+      aria-activedescendant={open && activeIndex >= 0 ? `${componentId}-option-${activeIndex}` : undefined}
+      aria-describedby={describedBy}
+      aria-invalid={error || field?.invalid ? 'true' : undefined}
       class={cn(
         'flex-1 min-w-[80px] bg-transparent text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none',
         disabled && 'cursor-not-allowed'
       )}
     />
 
+    {#if value.length > 0}
+      <span id={selectedDescriptionId} class="sr-only">
+        Selected: {selectedOptions.map(option => option.label).join(', ')}
+      </span>
+    {/if}
+
     <button
       type="button"
+      aria-label={open ? 'Close options' : 'Open options'}
       {disabled}
       tabindex="-1"
       onclick={() => { open = !open; if (open) inputEl?.focus(); }}
@@ -140,6 +217,9 @@
 
   {#if open}
     <div
+      id={listboxId}
+      role="listbox"
+      aria-multiselectable="true"
       class={cn(
         'absolute top-full z-50 mt-1 w-full',
         'rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card)]',
@@ -152,9 +232,13 @@
       {:else}
         {#each filtered as opt, i}
           {@const selected = value.includes(opt.value)}
-          {@const atMax = !selected && !!max && value.length >= max}
+          {@const atMax = optionDisabled(opt)}
           <button
+            id={`${componentId}-option-${i}`}
             type="button"
+            role="option"
+            aria-selected={selected}
+            tabindex="-1"
             onclick={() => toggle(opt)}
             onmouseenter={() => { activeIndex = i; }}
             disabled={atMax}
@@ -193,7 +277,7 @@
 </div>
 
 <style>
-  @keyframes popoverIn {
+  @keyframes -global-popoverIn {
     from { opacity: 0; transform: scale(0.97) translateY(-4px); }
     to   { opacity: 1; transform: scale(1) translateY(0); }
   }

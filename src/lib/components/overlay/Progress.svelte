@@ -50,7 +50,7 @@
 </div>
 
 <style>
-  @keyframes indeterminate {
+  @keyframes -global-indeterminate {
     0%   { transform: translateX(-100%); }
     100% { transform: translateX(350%); }
   }

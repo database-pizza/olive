@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { cn } from '$lib/utils/cn.js';
   import JsonViewer from './JsonViewer.svelte';
 
@@ -36,14 +37,18 @@
     return 0;
   }
 
-  let collapsed = $state(depth >= expandDepth);
+  let collapsed = $state(untrack(() => depth >= expandDepth));
 
-  const type = getType(data);
-  const expandable = isExpandable(data);
-  const count = entryCount(data);
+  let type = $derived(getType(data));
+  let expandable = $derived(isExpandable(data));
+  let count = $derived(entryCount(data));
 
-  const openBracket = type === 'array' ? '[' : '{';
-  const closeBracket = type === 'array' ? ']' : '}';
+  let openBracket = $derived(type === 'array' ? '[' : '{');
+  let closeBracket = $derived(type === 'array' ? ']' : '}');
+
+  $effect(() => {
+    collapsed = depth >= expandDepth;
+  });
 
   let entries = $derived.by((): [string, unknown][] => {
     if (type === 'array') return (data as unknown[]).map((v, i) => [String(i), v]);

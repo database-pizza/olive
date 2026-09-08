@@ -1,6 +1,7 @@
 <script lang="ts">
   import { cn } from '$lib/utils/cn.js';
   import { browser } from '$app/environment';
+  import { modal } from '$lib/utils/modal.js';
 
   interface CommandItem {
     id: string;
@@ -28,7 +29,8 @@
 
   let query = $state('');
   let activeIndex = $state(0);
-  let inputEl = $state<HTMLInputElement | null>(null);
+  const paletteId = $props.id();
+  const listboxId = `${paletteId}-listbox`;
 
   function close() {
     open = false;
@@ -56,7 +58,6 @@
   });
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') { close(); return; }
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       activeIndex = Math.min(activeIndex + 1, filtered.length - 1);
@@ -64,8 +65,11 @@
       e.preventDefault();
       activeIndex = Math.max(activeIndex - 1, 0);
     } else if (e.key === 'Enter') {
-      filtered[activeIndex]?.onselect();
-      close();
+      const item = filtered[activeIndex];
+      if (item) {
+        item.onselect();
+        close();
+      }
     }
   }
 
@@ -74,7 +78,8 @@
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        open = !open;
+        if (open) close();
+        else open = true;
       }
     };
     document.addEventListener('keydown', handler);
@@ -82,30 +87,42 @@
   });
 
   $effect(() => {
-    if (open) setTimeout(() => inputEl?.focus(), 10);
+    query;
+    activeIndex = 0;
   });
 
-  // Track global index across groups for keyboard nav
-  let flatIndex = $state(0);
-  $effect(() => { flatIndex; activeIndex = 0; });
+  function portal(node: HTMLElement) {
+    document.body.appendChild(node);
+    return { destroy: () => node.remove() };
+  }
+
+  function handleBackdrop(event: MouseEvent) {
+    if (event.target === event.currentTarget) close();
+  }
 </script>
 
 {#if open}
-  <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
   <div
-    class="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh] px-4"
-    onclick={(e) => { if (e.target === e.currentTarget) close(); }}
+    use:portal
+    role="presentation"
+    class="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4"
+    onclick={handleBackdrop}
   >
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm animate-[fadeIn_150ms_ease-out]"></div>
+    <div class="pointer-events-none absolute inset-0 bg-black/40 backdrop-blur-sm animate-[fadeIn_150ms_ease-out]"></div>
 
     <div
+      use:modal={{ onEscape: close, initialFocus: 'input' }}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Command palette"
+      tabindex="-1"
       class={cn(
         'relative z-10 w-full max-w-lg overflow-hidden',
         'rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card)]',
         'shadow-[var(--shadow-lg)]',
         'animate-[slideUpFadeIn_200ms_cubic-bezier(0.16,1,0.3,1)]'
       )}
-      onkeydown={handleKeydown}
     >
       <!-- Search input -->
       <div class="flex items-center gap-3 border-b border-[var(--border)] px-4">
@@ -113,20 +130,23 @@
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
         <input
-          bind:this={inputEl}
           bind:value={query}
           {placeholder}
           type="text"
           role="combobox"
           aria-expanded="true"
           aria-autocomplete="list"
+          aria-controls={listboxId}
+          aria-activedescendant={filtered.length > 0 ? `${paletteId}-option-${activeIndex}` : undefined}
+          aria-label="Search commands"
+          onkeydown={handleKeydown}
           class="flex-1 bg-transparent py-4 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none"
         />
         <kbd class="hidden sm:flex items-center gap-1 rounded border border-[var(--border)] bg-[var(--muted)] px-1.5 py-0.5 text-xs text-[var(--muted-foreground)]">Esc</kbd>
       </div>
 
       <!-- Results -->
-      <div class="max-h-[340px] overflow-y-auto py-2" role="listbox">
+      <div id={listboxId} class="max-h-[340px] overflow-y-auto py-2" role="listbox" aria-label="Commands">
         {#if filtered.length === 0}
           <p class="px-4 py-10 text-center text-sm text-[var(--muted-foreground)]">No results for "{query}"</p>
         {:else}
@@ -137,8 +157,10 @@
             {#each groupItems as item, i}
               {@const idx = filtered.indexOf(item)}
               <button
+                id={`${paletteId}-option-${idx}`}
                 role="option"
                 aria-selected={idx === activeIndex}
+                tabindex="-1"
                 onclick={() => { item.onselect(); close(); }}
                 onmouseenter={() => { activeIndex = idx; }}
                 class={cn(
@@ -170,10 +192,10 @@
 {/if}
 
 <style>
-  @keyframes fadeIn {
+  @keyframes -global-fadeIn {
     from { opacity: 0; } to { opacity: 1; }
   }
-  @keyframes slideUpFadeIn {
+  @keyframes -global-slideUpFadeIn {
     from { opacity: 0; transform: translateY(-8px) scale(0.98); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }

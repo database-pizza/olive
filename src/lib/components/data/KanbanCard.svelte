@@ -36,6 +36,7 @@
 </script>
 
 <div
+  role="listitem"
   {draggable}
   ondragstart={handleDragStart}
   ondragend={() => { dragging = false; }}

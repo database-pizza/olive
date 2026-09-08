@@ -130,7 +130,7 @@
 />`}
       props={[
         { name: 'data', type: 'T[]', description: 'Array of row objects' },
-        { name: 'columns', type: '{ key: keyof T; header: string; sortable?: boolean; width?: string; render?: fn }[]', description: 'Column definitions' },
+        { name: 'columns', type: '{ key: keyof T; header: string; sortable?: boolean; width?: string; render?: fn }[]', description: 'Column definitions; render returns escaped text' },
         { name: 'pageSize', type: 'number', default: '10', description: 'Rows per page' },
         { name: 'searchable', type: 'boolean', default: 'false', description: 'Shows a search input above the table' },
         { name: 'searchPlaceholder', type: 'string', default: "'Search…'", description: 'Search input placeholder' },

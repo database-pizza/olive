@@ -28,15 +28,26 @@
     collapsed = !collapsed;
     oncollapsechange?.(collapsed);
   }
+
+  $effect(() => {
+    if (!mobileOpen) return;
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') mobileOpen = false;
+    };
+    document.addEventListener('keydown', handleKeydown);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  });
 </script>
 
 <!-- Mobile overlay -->
 {#if mobileOpen}
-  <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-  <div
+  <button
+    type="button"
+    tabindex="-1"
+    aria-label="Close navigation"
     class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden animate-[fadeIn_150ms_ease-out]"
     onclick={() => { mobileOpen = false; }}
-  ></div>
+  ></button>
 {/if}
 
 <!-- Sidebar panel -->
@@ -108,7 +119,7 @@
 </aside>
 
 <style>
-  @keyframes fadeIn {
+  @keyframes -global-fadeIn {
     from { opacity: 0; } to { opacity: 1; }
   }
 </style>

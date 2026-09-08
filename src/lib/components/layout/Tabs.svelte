@@ -27,10 +27,31 @@
     children,
     onchange,
   }: Props = $props();
+  const tabsId = $props.id();
 
   function select(id: string) {
     active = id;
     onchange?.(id);
+  }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
+
+    event.preventDefault();
+    const current = event.currentTarget as HTMLButtonElement;
+    const buttons = Array.from(current.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)') ?? []);
+    const currentIndex = buttons.indexOf(current);
+    let nextIndex = currentIndex;
+
+    if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = buttons.length - 1;
+    else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % buttons.length;
+    else nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+
+    const next = buttons[nextIndex];
+    if (!next) return;
+    next.focus();
+    select(next.dataset.tabId ?? '');
   }
 
   setContext('tabs', { get active() { return active; } });
@@ -44,11 +65,15 @@
   >
     {#each tabs as tab}
       <button
+        id={`${tabsId}-tab-${tab.id}`}
+        data-tab-id={tab.id}
         role="tab"
         aria-selected={active === tab.id}
-        aria-controls="tabpanel-{tab.id}"
+        aria-controls={`${tabsId}-panel`}
+        tabindex={active === tab.id ? 0 : -1}
         disabled={tab.disabled}
         onclick={() => select(tab.id)}
+        onkeydown={handleKeydown}
         class={cn(
           'relative flex items-center gap-1.5 px-3.5 py-2.5 text-sm font-medium',
           'whitespace-nowrap transition-colors duration-[150ms]',
@@ -73,8 +98,10 @@
 
   <!-- Panel -->
   <div
-    id="tabpanel-{active}"
+    id={`${tabsId}-panel`}
     role="tabpanel"
+    aria-labelledby={`${tabsId}-tab-${active}`}
+    tabindex="0"
     class={cn('mt-4', panelClass)}
   >
     {#if children}{@render children(active)}{/if}

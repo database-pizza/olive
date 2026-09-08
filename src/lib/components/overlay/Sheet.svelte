@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import { cn } from '$lib/utils/cn.js';
+  import { modal } from '$lib/utils/modal.js';
 
   type Side = 'left' | 'right' | 'top' | 'bottom';
 
@@ -26,13 +27,20 @@
     onclose,
   }: Props = $props();
 
+  const sheetId = $props.id();
+
   function close() {
     open = false;
     onclose?.();
   }
 
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') close();
+  function handleBackdrop(event: MouseEvent) {
+    if (event.target === event.currentTarget) close();
+  }
+
+  function portal(node: HTMLElement) {
+    document.body.appendChild(node);
+    return { destroy: () => node.remove() };
   }
 
   const panelClasses: Record<Side, string> = {
@@ -42,33 +50,34 @@
     bottom: 'inset-x-0 bottom-0 w-full max-h-[60vh] border-t',
   };
 
-  const enterFrom: Record<Side, string> = {
-    right:  'translate-x-full',
-    left:   '-translate-x-full',
-    top:    '-translate-y-full',
-    bottom: 'translate-y-full',
+  const enterStyle: Record<Side, string> = {
+    right:  '--sheet-enter-x: 100%; --sheet-enter-y: 0;',
+    left:   '--sheet-enter-x: -100%; --sheet-enter-y: 0;',
+    top:    '--sheet-enter-x: 0; --sheet-enter-y: -100%;',
+    bottom: '--sheet-enter-x: 0; --sheet-enter-y: 100%;',
   };
 </script>
 
 {#if open}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
   <div
+    use:portal
     role="presentation"
-    class="fixed inset-0 z-50 flex"
-    onkeydown={handleKeydown}
+    class="fixed inset-0 z-[100] flex"
+    onclick={handleBackdrop}
   >
     <!-- Backdrop -->
-    <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-    <div
-      class="absolute inset-0 bg-black/40 backdrop-blur-sm animate-[fadeIn_200ms_ease-out]"
-      onclick={close}
-    ></div>
+    <div class="pointer-events-none absolute inset-0 bg-black/40 backdrop-blur-sm animate-[fadeIn_200ms_ease-out]"></div>
 
     <!-- Panel -->
     <div
+      use:modal={{ onEscape: close }}
       role="dialog"
       aria-modal="true"
       tabindex="-1"
-      aria-labelledby={title ? 'sheet-title' : undefined}
+      aria-labelledby={title ? `${sheetId}-title` : undefined}
+      aria-describedby={description ? `${sheetId}-description` : undefined}
+      style={enterStyle[side]}
       class={cn(
         'absolute flex flex-col bg-[var(--card)] border-[var(--border)]',
         'shadow-[var(--shadow-lg)]',
@@ -81,10 +90,10 @@
       <div class="flex items-start justify-between gap-4 px-6 py-5 border-b border-[var(--border)]">
         <div>
           {#if title}
-            <h2 id="sheet-title" class="text-base font-semibold text-[var(--foreground)]">{title}</h2>
+            <h2 id={`${sheetId}-title`} class="text-base font-semibold text-[var(--foreground)]">{title}</h2>
           {/if}
           {#if description}
-            <p class="mt-1 text-sm text-[var(--muted-foreground)]">{description}</p>
+            <p id={`${sheetId}-description`} class="mt-1 text-sm text-[var(--muted-foreground)]">{description}</p>
           {/if}
         </div>
         <button
@@ -115,12 +124,12 @@
 {/if}
 
 <style>
-  @keyframes fadeIn {
+  @keyframes -global-fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
   }
-  @keyframes sheetIn {
-    from { opacity: 0; transform: translateX(100%); }
-    to   { opacity: 1; transform: translateX(0); }
+  @keyframes -global-sheetIn {
+    from { opacity: 0; transform: translate(var(--sheet-enter-x), var(--sheet-enter-y)); }
+    to   { opacity: 1; transform: translate(0, 0); }
   }
 </style>

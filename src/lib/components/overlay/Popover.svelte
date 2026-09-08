@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import { cn } from '$lib/utils/cn.js';
+  import { popupElement, popupTrigger } from '$lib/utils/popup.js';
 
   type Align = 'start' | 'center' | 'end';
   type Side = 'top' | 'bottom' | 'left' | 'right';
@@ -9,6 +10,7 @@
     open?: boolean;
     align?: Align;
     side?: Side;
+    label?: string;
     class?: string;
     trigger?: Snippet;
     children?: Snippet;
@@ -18,12 +20,16 @@
     open = $bindable(false),
     align = 'start',
     side = 'bottom',
+    label = 'Popover',
     class: className = '',
     trigger,
     children,
   }: Props = $props();
 
   let containerEl = $state<HTMLElement | null>(null);
+  let triggerEl = $state<HTMLElement | null>(null);
+  const componentId = $props.id();
+  const popoverId = `${componentId}-popover`;
 
   function toggle() { open = !open; }
   function close() { open = false; }
@@ -33,7 +39,11 @@
   }
 
   function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') close();
+    if (e.key === 'Escape' && open) {
+      e.preventDefault();
+      close();
+      popupElement(triggerEl)?.focus();
+    }
   }
 
   $effect(() => {
@@ -63,12 +73,21 @@
   bind:this={containerEl}
   onkeydown={handleKeydown}
 >
-  <div onclick={toggle} class="inline-flex">
+  <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+  <div
+    bind:this={triggerEl}
+    use:popupTrigger={{ expanded: open, controls: popoverId, haspopup: 'dialog' }}
+    onclick={toggle}
+    class="inline-flex"
+  >
     {#if trigger}{@render trigger()}{/if}
   </div>
 
   {#if open}
     <div
+      id={popoverId}
+      role="dialog"
+      aria-label={label}
       class={cn(
         'absolute z-50 min-w-[220px]',
         'rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card)]',
@@ -85,7 +104,7 @@
 </div>
 
 <style>
-  @keyframes popoverIn {
+  @keyframes -global-popoverIn {
     from { opacity: 0; transform: scale(0.96); }
     to   { opacity: 1; transform: scale(1); }
   }

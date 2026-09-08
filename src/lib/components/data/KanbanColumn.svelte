@@ -36,6 +36,8 @@
 </script>
 
 <div
+  role="group"
+  aria-label={`${title} drop zone`}
   ondragover={handleDragOver}
   ondragleave={() => { over = false; }}
   ondrop={handleDrop}
@@ -56,13 +58,13 @@
   </div>
 
   <!-- Cards -->
-  <div class="flex flex-1 flex-col gap-2 overflow-y-auto p-2.5 min-h-[120px]">
+  <div role="list" aria-label={title} class="flex flex-1 flex-col gap-2 overflow-y-auto p-2.5 min-h-[120px]">
     {#if children}
       {@render children()}
     {/if}
 
     {#if over}
-      <div class="rounded-[var(--radius)] border-2 border-dashed border-[var(--primary)]/40 h-14 transition-all duration-[150ms]"></div>
+      <div role="presentation" class="rounded-[var(--radius)] border-2 border-dashed border-[var(--primary)]/40 h-14 transition-all duration-[150ms]"></div>
     {/if}
   </div>
 </div>

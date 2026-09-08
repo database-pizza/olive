@@ -47,11 +47,12 @@
 <div class="flex min-h-screen bg-[var(--background)]">
   <!-- Mobile overlay -->
   {#if mobileOpen}
-    <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-    <div
+    <button
+      type="button"
+      aria-label="Close navigation"
       class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
       onclick={() => { mobileOpen = false; }}
-    ></div>
+    ></button>
   {/if}
 
   <!-- Sidebar -->

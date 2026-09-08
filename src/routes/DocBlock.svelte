@@ -29,7 +29,7 @@
   }: Props = $props();
 
   let tab = $state<'preview' | 'code' | 'props'>('preview');
-  const tabs = ['preview', 'code', ...(props.length ? ['props'] : [])] as const;
+  let tabs = $derived(['preview', 'code', ...(props.length ? ['props'] : [])] as const);
 </script>
 
 <div id={name.toLowerCase().replace(/\s+/g, '-')} class={cn('scroll-mt-20', className)}>

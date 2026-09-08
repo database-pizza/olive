@@ -20,8 +20,19 @@
   }: Props = $props();
 
   let menuOpen = $state(false);
+  let menuButton = $state<HTMLButtonElement | null>(null);
+  const navbarId = $props.id();
+  const menuId = `${navbarId}-mobile-menu`;
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Escape' || !menuOpen) return;
+    event.preventDefault();
+    menuOpen = false;
+    menuButton?.focus();
+  }
 </script>
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <header
   class={cn(
     'sticky top-0 z-40 h-14 w-full',
@@ -29,6 +40,7 @@
     'border-b border-[var(--border)]',
     className
   )}
+  onkeydown={handleKeydown}
 >
   <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
     <!-- Logo -->
@@ -59,9 +71,11 @@
       <!-- Mobile menu button -->
       {#if nav}
         <button
+          bind:this={menuButton}
           type="button"
           aria-label="Toggle menu"
           aria-expanded={menuOpen}
+          aria-controls={menuId}
           onclick={() => { menuOpen = !menuOpen; }}
           class={cn(
             'md:hidden flex h-8 w-8 items-center justify-center rounded-[var(--radius)]',
@@ -85,6 +99,7 @@
   <!-- Mobile nav dropdown -->
   {#if nav && menuOpen}
     <div
+      id={menuId}
       class="md:hidden border-t border-[var(--border)] bg-[var(--card)]/95 backdrop-blur-xl"
     >
       <div class="mx-auto max-w-7xl px-4 py-3 flex flex-col gap-1">

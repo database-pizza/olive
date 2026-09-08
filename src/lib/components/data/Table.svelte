@@ -32,6 +32,12 @@
     if (val === null || val === undefined) return '—';
     return String(val);
   }
+
+  function handleRowKeydown(event: KeyboardEvent, row: Record<string, unknown>) {
+    if (!onrowclick || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    onrowclick(row);
+  }
 </script>
 
 <div class={cn('w-full overflow-x-auto rounded-[var(--radius)] border border-[var(--border)]', className)}>
@@ -52,12 +58,14 @@
     <tbody>
       {#each rows as row, i (rowKey ? row[rowKey as string] : i)}
         <tr
+          tabindex={onrowclick ? 0 : undefined}
           class={cn(
             'border-b border-[var(--border)] last:border-0',
             'transition-colors duration-[100ms]',
             onrowclick ? 'cursor-pointer hover:bg-[var(--muted)]/50' : 'hover:bg-[var(--muted)]/30',
           )}
           onclick={() => onrowclick?.(row)}
+          onkeydown={(event) => handleRowKeydown(event, row)}
         >
           {#each columns as col}
             <td

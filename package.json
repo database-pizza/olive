@@ -1,6 +1,6 @@
 {
 	"name": "@database.pizza/olive",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -14,34 +14,39 @@
 	},
 	"exports": {
 		".": {
-			"types": "./src/lib/index.ts",
-			"svelte": "./src/lib/index.ts",
-			"default": "./src/lib/index.ts"
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js",
+			"default": "./dist/index.js"
 		},
-		"./styles": "./src/lib/styles.css"
+		"./styles": "./dist/styles.css",
+		"./tokens": "./dist/tokens.css",
+		"./tokens.css": "./dist/tokens.css"
 	},
-	"svelte": "./src/lib/index.ts",
+	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
 		"dist"
 	],
+	"dependencies": {
+		"tailwindcss": "^4.2.4"
+	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",
 		"@sveltejs/kit": "^2.57.0",
 		"@sveltejs/package": "^2.5.7",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"@tailwindcss/vite": "^4.2.4",
 		"publint": "^0.3.18",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
 		"typescript": "^6.0.2",
 		"vite": "^8.0.7"
 	},
-	"dependencies": {
-		"@tailwindcss/vite": "^4.2.4",
-		"tailwindcss": "^4.2.4"
-	},
 	"peerDependencies": {
-		"svelte": "^5.0.0",
+		"svelte": "^5.20.0",
 		"@sveltejs/kit": "^2.0.0"
+	},
+	"overrides": {
+		"cookie": "^0.7.2"
 	}
 }

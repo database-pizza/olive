@@ -1,12 +1,15 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import type { HTMLButtonAttributes } from 'svelte/elements';
+  import type { HTMLAnchorAttributes, HTMLButtonAttributes } from 'svelte/elements';
   import { cn } from '$lib/utils/cn.js';
 
   type Variant = 'default' | 'outline' | 'ghost' | 'destructive' | 'link';
   type Size = 'sm' | 'md' | 'lg' | 'icon';
 
   interface Props extends HTMLButtonAttributes {
+    href?: string;
+    target?: HTMLAnchorAttributes['target'];
+    rel?: string;
     variant?: Variant;
     size?: Size;
     class?: string;
@@ -16,6 +19,11 @@
   let {
     variant = 'default',
     size = 'md',
+    href,
+    target,
+    rel,
+    disabled = false,
+    tabindex,
     class: className = '',
     children,
     ...rest
@@ -43,16 +51,34 @@
     lg:   'h-10 rounded-[var(--radius-button)] px-5 text-sm',
     icon: 'h-8 w-8 rounded-[var(--radius-button)]',
   };
+
+  function anchorAttributes(attributes: HTMLButtonAttributes): HTMLAnchorAttributes {
+    return attributes as unknown as HTMLAnchorAttributes;
+  }
 </script>
 
-<button
-  class={cn(base, variants[variant], sizes[size], className)}
-  {...rest}
->
-  {#if children}
-    {@render children()}
-  {/if}
-</button>
+{#if href}
+  <a
+    {...anchorAttributes(rest)}
+    href={disabled ? undefined : href}
+    {target}
+    {rel}
+    aria-disabled={disabled || undefined}
+    tabindex={disabled ? -1 : tabindex}
+    class={cn(base, variants[variant], sizes[size], disabled && 'pointer-events-none opacity-40', className)}
+  >
+    {#if children}{@render children()}{/if}
+  </a>
+{:else}
+  <button
+    class={cn(base, variants[variant], sizes[size], className)}
+    {disabled}
+    {tabindex}
+    {...rest}
+  >
+    {#if children}{@render children()}{/if}
+  </button>
+{/if}
 
 <style>
   /* Primary — depth via top inner highlight + bottom shadow */

@@ -104,16 +104,25 @@
         <tr class="border-b border-[var(--border)] bg-[var(--muted)]/40">
           {#each columns as col}
             <th
+              scope="col"
+              aria-sort={col.sortable
+                ? sortKey === col.key
+                  ? sortDir === 'asc' ? 'ascending' : sortDir === 'desc' ? 'descending' : 'none'
+                  : 'none'
+                : undefined}
               class={cn(
                 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]',
-                col.sortable && 'cursor-pointer select-none hover:text-[var(--foreground)] transition-colors'
+                col.sortable && 'select-none'
               )}
               style={col.width ? `width: ${col.width}` : ''}
-              onclick={() => col.sortable && toggleSort(col.key)}
             >
-              <span class="inline-flex items-center gap-1.5">
-                {col.header}
-                {#if col.sortable}
+              {#if col.sortable}
+                <button
+                  type="button"
+                  onclick={() => toggleSort(col.key)}
+                  class="inline-flex cursor-pointer items-center gap-1.5 rounded-sm hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] transition-colors"
+                >
+                  {col.header}
                   <span class="flex flex-col gap-px">
                     <svg width="8" height="5" viewBox="0 0 8 5" class={cn('transition-colors', sortKey === col.key && sortDir === 'asc' ? 'text-[var(--foreground)]' : 'text-[var(--border)]')}>
                       <path d="M0 5L4 0L8 5H0Z" fill="currentColor"/>
@@ -122,8 +131,10 @@
                       <path d="M0 0L4 5L8 0H0Z" fill="currentColor"/>
                     </svg>
                   </span>
-                {/if}
-              </span>
+                </button>
+              {:else}
+                {col.header}
+              {/if}
             </th>
           {/each}
         </tr>
@@ -137,7 +148,7 @@
           {#each paged as row, i}
             <tr class={cn('border-b border-[var(--border)] last:border-0 transition-colors duration-[100ms] hover:bg-[var(--muted)]/30', i % 2 === 1 && 'bg-[var(--muted)]/10')}>
               {#each columns as col}
-                <td class="px-4 py-3 text-[var(--foreground)]">{@html cellValue(row, col)}</td>
+                <td class="px-4 py-3 text-[var(--foreground)]">{cellValue(row, col)}</td>
               {/each}
             </tr>
           {/each}
@@ -152,6 +163,7 @@
       <div class="flex items-center gap-1">
         <button
           type="button"
+          aria-label="Previous page"
           onclick={() => page = Math.max(0, page - 1)}
           disabled={page === 0}
           class={cn(
@@ -168,6 +180,8 @@
           {#if totalPages <= 7 || p === 0 || p === totalPages - 1 || Math.abs(p - page) <= 1}
             <button
               type="button"
+              aria-label={`Page ${p + 1}`}
+              aria-current={p === page ? 'page' : undefined}
               onclick={() => page = p}
               class={cn(
                 'flex h-7 min-w-7 cursor-pointer items-center justify-center rounded-[var(--radius-button)] border px-1.5 text-xs transition-colors',
@@ -183,6 +197,7 @@
 
         <button
           type="button"
+          aria-label="Next page"
           onclick={() => page = Math.min(totalPages - 1, page + 1)}
           disabled={page === totalPages - 1}
           class={cn(

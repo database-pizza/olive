@@ -1,0 +1,108 @@
+:root {
+  --olive-font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --olive-font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", "Fira Code", monospace;
+  --olive-text-caption: 0.75rem;
+  --olive-text-body: 0.875rem;
+  --olive-text-control: 0.875rem;
+  --olive-text-title: 1.125rem;
+  --olive-leading-tight: 1.25;
+  --olive-leading-body: 1.5;
+
+  --olive-space-1: 0.25rem;
+  --olive-space-2: 0.5rem;
+  --olive-space-3: 0.75rem;
+  --olive-space-4: 1rem;
+  --olive-space-5: 1.5rem;
+  --olive-space-6: 2rem;
+  --olive-space-7: 3rem;
+  --olive-space-8: 4rem;
+
+  --olive-50: hsl(75 60% 96%);
+  --olive-100: hsl(75 60% 90%);
+  --olive-200: hsl(75 58% 78%);
+  --olive-300: hsl(75 56% 66%);
+  --olive-400: hsl(75 58% 54%);
+  --olive-500: hsl(75 60% 44%);
+  --olive-600: hsl(75 55% 38%);
+  --olive-700: hsl(75 50% 32%);
+  --olive-800: hsl(75 45% 24%);
+  --olive-900: hsl(75 40% 16%);
+  --olive-brand-accent: var(--olive-500);
+  --olive-brand-accent-bright: var(--olive-400);
+
+  --olive-radius-surface: 0.75rem;
+  --olive-radius-control: 0.4375rem;
+  --olive-radius-sm: calc(var(--olive-radius-surface) * 0.5);
+  --olive-radius-lg: calc(var(--olive-radius-surface) * 1.5);
+  --olive-radius-full: 9999px;
+
+  --olive-duration-micro: 100ms;
+  --olive-duration-fast: 150ms;
+  --olive-duration-base: 200ms;
+  --olive-duration-slow: 250ms;
+  --olive-duration-page: 350ms;
+  --olive-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --olive-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --olive-ease-move: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Stable aliases consumed by Olive components and existing products. */
+  --font-sans: var(--olive-font-sans);
+  --font-mono: var(--olive-font-mono);
+  --color-olive-50: var(--olive-50);
+  --color-olive-100: var(--olive-100);
+  --color-olive-200: var(--olive-200);
+  --color-olive-300: var(--olive-300);
+  --color-olive-400: var(--olive-400);
+  --color-olive-500: var(--olive-500);
+  --color-olive-600: var(--olive-600);
+  --color-olive-700: var(--olive-700);
+  --color-olive-800: var(--olive-800);
+  --color-olive-900: var(--olive-900);
+  --radius: var(--olive-radius-surface);
+  --radius-button: var(--olive-radius-control);
+  --radius-sm: var(--olive-radius-sm);
+  --radius-lg: var(--olive-radius-lg);
+  --radius-full: var(--olive-radius-full);
+  --duration-micro: var(--olive-duration-micro);
+  --duration-fast: var(--olive-duration-fast);
+  --duration-base: var(--olive-duration-base);
+  --duration-slow: var(--olive-duration-slow);
+  --duration-page: var(--olive-duration-page);
+  --ease-enter: var(--olive-ease-enter);
+  --ease-exit: var(--olive-ease-exit);
+  --ease-move: var(--olive-ease-move);
+
+  --background: hsl(60 8% 95%);
+  --foreground: hsl(70 8% 15%);
+  --card: hsl(60 6% 97%);
+  --card-foreground: hsl(70 8% 15%);
+  --muted: hsl(65 8% 91%);
+  --muted-foreground: hsl(70 4% 45%);
+  --border: hsl(65 6% 86%);
+  --primary: hsl(75 60% 44%);
+  --primary-foreground: hsl(70 8% 15%);
+  --destructive: hsl(0 55% 52%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --ring: hsl(75 60% 44%);
+  --shadow-sm: 0 1px 2px hsl(70 8% 15% / 0.06);
+  --shadow-md: 0 4px 12px hsl(70 8% 15% / 0.08);
+  --shadow-lg: 0 8px 24px hsl(70 8% 15% / 0.1);
+}
+
+.dark {
+  --background: hsl(70 4% 9%);
+  --foreground: hsl(60 8% 85%);
+  --card: hsl(70 4% 11%);
+  --card-foreground: hsl(60 8% 85%);
+  --muted: hsl(70 4% 15%);
+  --muted-foreground: hsl(65 4% 50%);
+  --border: hsl(70 4% 18%);
+  --primary: hsl(75 55% 52%);
+  --primary-foreground: hsl(70 4% 9%);
+  --destructive: hsl(0 45% 42%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --ring: hsl(75 55% 52%);
+  --shadow-sm: 0 1px 2px hsl(70 4% 4% / 0.4);
+  --shadow-md: 0 4px 12px hsl(70 4% 4% / 0.5);
+  --shadow-lg: 0 8px 24px hsl(70 4% 4% / 0.6);
+}
