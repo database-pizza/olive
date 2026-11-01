@@ -24,6 +24,7 @@ export { default as Page }             from './components/layout/Page.svelte';
 export { default as PageHeader }       from './components/layout/PageHeader.svelte';
 export { default as Tabs }             from './components/layout/Tabs.svelte';
 export { default as Breadcrumbs }      from './components/layout/Breadcrumbs.svelte';
+export { default as PageToolbar }      from './components/layout/PageToolbar.svelte';
 
 // Navigation
 export { default as Navbar }      from './components/navigation/Navbar.svelte';
@@ -51,11 +52,14 @@ export { default as SidebarSection } from './components/navigation/SidebarSectio
 
 // Overlay (continued)
 export { default as Sheet }   from './components/overlay/Sheet.svelte';
+export { default as ShortcutSheet } from './components/overlay/ShortcutSheet.svelte';
 export { default as Popover } from './components/overlay/Popover.svelte';
 
 // Forms
 export { default as FormField   } from './components/forms/FormField.svelte';
 export { default as SearchInput } from './components/forms/SearchInput.svelte';
+export { default as FilterChips } from './components/forms/FilterChips.svelte';
+export { default as PasswordStrength } from './components/forms/PasswordStrength.svelte';
 export { default as FileUpload  } from './components/forms/FileUpload.svelte';
 export { default as Combobox    } from './components/forms/Combobox.svelte';
 export { default as MultiSelect } from './components/forms/MultiSelect.svelte';
@@ -63,6 +67,14 @@ export { default as DatePicker  } from './components/forms/DatePicker.svelte';
 
 // Data Display
 export { default as Table      } from './components/data/Table.svelte';
+export { default as StatusPill     } from './components/data/StatusPill.svelte';
+export { default as Sparkline      } from './components/data/Sparkline.svelte';
+export { default as QuotaRing      } from './components/data/QuotaRing.svelte';
+export { default as CopyButton     } from './components/data/CopyButton.svelte';
+export { default as TimeAgo        } from './components/data/TimeAgo.svelte';
+export { default as ConnectionCard } from './components/data/ConnectionCard.svelte';
+export { default as LogStream      } from './components/data/LogStream.svelte';
+export { default as DiffViewer     } from './components/data/DiffViewer.svelte';
 export { default as CodeBlock  } from './components/data/CodeBlock.svelte';
 export { default as MetricCard } from './components/data/MetricCard.svelte';
 export { default as EmptyState } from './components/data/EmptyState.svelte';

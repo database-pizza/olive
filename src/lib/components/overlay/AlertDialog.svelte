@@ -59,7 +59,7 @@
       aria-labelledby={`${dialogId}-title`}
       aria-describedby={description ? `${dialogId}-description` : undefined}
       class={cn(
-        'relative z-10 w-full max-w-sm max-w-[calc(100vw-2rem)]',
+        'relative z-10 w-full max-w-sm',
         'rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card)]',
         'shadow-[var(--shadow-lg)]',
         'animate-[slideUpFadeIn_250ms_cubic-bezier(0.16,1,0.3,1)]',

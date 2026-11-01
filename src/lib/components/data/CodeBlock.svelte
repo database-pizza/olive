@@ -33,7 +33,7 @@
       class={cn(
         'flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
         'cursor-pointer transition-colors duration-[150ms]',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] rounded'
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)] rounded'
       )}
     >
       {#if copied}

@@ -24,7 +24,7 @@
   class={cn(
     'flex items-center gap-2 rounded-[var(--radius)] px-3 py-1.5 text-sm font-medium',
     'transition-colors duration-[150ms]',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
     isActive
       ? 'bg-[var(--primary)]/10 text-[var(--primary)]'
       : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]',

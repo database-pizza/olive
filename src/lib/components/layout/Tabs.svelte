@@ -77,7 +77,7 @@
         class={cn(
           'relative flex items-center gap-1.5 px-3.5 py-2.5 text-sm font-medium',
           'whitespace-nowrap transition-colors duration-[150ms]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)] focus-visible:ring-inset',
           'cursor-pointer disabled:cursor-not-allowed disabled:opacity-40',
           active === tab.id
             ? 'text-[var(--foreground)]'

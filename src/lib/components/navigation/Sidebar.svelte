@@ -100,7 +100,7 @@
       'rounded-full border border-[var(--border)] bg-[var(--card)]',
       'text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
       'shadow-[var(--shadow-sm)] transition-colors duration-[150ms]',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]'
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]'
     )}
   >
     <svg

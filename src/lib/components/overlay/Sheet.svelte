@@ -100,7 +100,7 @@
           type="button"
           onclick={close}
           aria-label="Close"
-          class="cursor-pointer shrink-0 flex h-7 w-7 items-center justify-center rounded-[var(--radius-button)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors duration-[150ms] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+          class="cursor-pointer shrink-0 flex h-7 w-7 items-center justify-center rounded-[var(--radius-button)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors duration-[150ms] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M18 6L6 18M6 6l12 12"/>

@@ -81,7 +81,7 @@
             'md:hidden flex h-8 w-8 items-center justify-center rounded-[var(--radius)]',
             'cursor-pointer text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]',
             'transition-all duration-[150ms]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
           )}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

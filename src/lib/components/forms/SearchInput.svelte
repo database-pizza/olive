@@ -52,7 +52,7 @@
       'flex h-9 w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent',
       'pl-9 pr-8 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]',
       'transition-colors duration-[150ms]',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
       'disabled:cursor-not-allowed disabled:opacity-40',
       '[&::-webkit-search-cancel-button]:hidden'
     )}

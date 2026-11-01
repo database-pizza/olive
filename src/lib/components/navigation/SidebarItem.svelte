@@ -33,7 +33,7 @@
     class={cn(
       'group relative flex items-center gap-3 rounded-[var(--radius)] px-2.5 py-2 text-sm font-medium',
       'transition-colors duration-[150ms]',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
       collapsed ? 'justify-center' : '',
       active
         ? 'bg-[var(--primary)]/10 text-[var(--primary)]'
@@ -65,7 +65,7 @@
     class={cn(
       'group relative flex w-full items-center gap-3 rounded-[var(--radius)] px-2.5 py-2 text-sm font-medium',
       'cursor-pointer transition-colors duration-[150ms]',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
       collapsed ? 'justify-center' : '',
       active
         ? 'bg-[var(--primary)]/10 text-[var(--primary)]'

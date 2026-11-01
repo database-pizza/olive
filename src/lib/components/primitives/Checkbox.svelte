@@ -47,7 +47,7 @@
       'h-4 w-4 rounded-[3px] border',
       'flex items-center justify-center overflow-hidden',
       'transition-colors duration-[100ms]',
-      'peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--ring)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--background)]',
+      'peer-focus-visible:ring-2 peer-focus-visible:ring-[color:var(--ring)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--background)]',
       checked || indeterminate
         ? 'bg-[var(--primary)] border-[var(--primary)]'
         : 'bg-transparent border-[var(--border)]',

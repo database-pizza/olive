@@ -91,7 +91,7 @@
         class={cn(
           'flex h-9 w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent',
           'pl-9 pr-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
           'transition-colors duration-[150ms]'
         )}
       />
@@ -120,7 +120,7 @@
                 <button
                   type="button"
                   onclick={() => toggleSort(col.key)}
-                  class="inline-flex cursor-pointer items-center gap-1.5 rounded-sm hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] transition-colors"
+                  class="inline-flex cursor-pointer items-center gap-1.5 rounded-sm hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)] transition-colors"
                 >
                   {col.header}
                   <span class="flex flex-col gap-px">

@@ -61,7 +61,7 @@
       aria-labelledby={title ? `${dialogId}-title` : undefined}
       aria-describedby={description ? `${dialogId}-description` : undefined}
       class={cn(
-        'relative z-10 my-auto flex max-h-[calc(100dvh-2rem)] w-full max-w-md max-w-[calc(100vw-2rem)] flex-col overflow-hidden',
+        'relative z-10 my-auto flex max-h-[calc(100dvh-2rem)] w-full max-w-md flex-col overflow-hidden',
         'rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card)]',
         'shadow-[var(--shadow-lg)]',
         'animate-[slideUpFadeIn_250ms_cubic-bezier(0.16,1,0.3,1)]',
@@ -89,7 +89,7 @@
           'absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-[calc(var(--radius)*0.67)]',
           'cursor-pointer text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]',
           'transition-all duration-[150ms]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
         )}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

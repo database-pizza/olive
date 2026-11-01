@@ -28,7 +28,7 @@
     'flex h-9 w-full rounded-[var(--radius)] border bg-transparent px-3 py-1 text-sm',
     'text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]',
     'transition-colors duration-[150ms]',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-0',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)] focus-visible:ring-offset-0',
     'disabled:cursor-not-allowed disabled:opacity-40',
     error || field?.invalid
       ? 'border-[var(--destructive)] focus-visible:ring-[var(--destructive)]'

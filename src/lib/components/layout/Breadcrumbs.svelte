@@ -39,7 +39,7 @@
           'px-1 rounded cursor-pointer',
           'text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
           'transition-colors duration-[150ms]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]'
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]'
         )}
       >{crumb.label}</a>
     {:else}

@@ -32,7 +32,7 @@
   const base = [
     'inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap',
     'transition-all duration-[150ms]',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
     'cursor-pointer disabled:pointer-events-none disabled:opacity-40',
     'select-none',
   ].join(' ');

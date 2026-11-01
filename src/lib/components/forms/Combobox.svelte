@@ -113,7 +113,7 @@
       'flex h-9 w-full items-center rounded-[var(--radius)] border bg-transparent',
       'text-sm transition-colors duration-[150ms]',
       error ? 'border-[var(--destructive)]' : 'border-[var(--border)]',
-      open && 'ring-2 ring-[var(--ring)]',
+      open && 'ring-2 ring-[color:var(--ring)]',
       disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
     )}
   >

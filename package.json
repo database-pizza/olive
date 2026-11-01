@@ -28,6 +28,7 @@
 		"dist"
 	],
 	"dependencies": {
+		"tailwind-merge": "^3.7.0",
 		"tailwindcss": "^4.2.4"
 	},
 	"devDependencies": {
@@ -43,8 +44,8 @@
 		"vite": "^8.0.7"
 	},
 	"peerDependencies": {
-		"svelte": "^5.20.0",
-		"@sveltejs/kit": "^2.0.0"
+		"@sveltejs/kit": "^2.0.0",
+		"svelte": "^5.20.0"
 	},
 	"overrides": {
 		"cookie": "^0.7.2"

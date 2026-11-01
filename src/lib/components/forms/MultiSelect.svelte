@@ -149,7 +149,7 @@
       'flex min-h-9 w-full flex-wrap items-center gap-1.5 rounded-[var(--radius)] border bg-transparent px-2 py-1.5',
       'text-sm transition-colors duration-[150ms]',
       error ? 'border-[var(--destructive)]' : 'border-[var(--border)]',
-      open && 'ring-2 ring-[var(--ring)]',
+      open && 'ring-2 ring-[color:var(--ring)]',
       disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-text'
     )}
     onclick={() => { if (!disabled) inputEl?.focus(); }}

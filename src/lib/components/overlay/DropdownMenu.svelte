@@ -127,7 +127,7 @@
             class={cn(
               'flex w-full items-center gap-2 rounded-[calc(var(--radius)*0.67)] px-2.5 py-1.5 text-sm',
               'transition-colors duration-[100ms] text-left',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-inset',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)] focus-visible:ring-inset',
               'cursor-pointer disabled:cursor-not-allowed disabled:opacity-40',
               item.variant === 'destructive'
                 ? 'text-[var(--destructive)] hover:bg-[var(--destructive)]/10'
