@@ -30,6 +30,11 @@
     oncollapsechange?.(collapsed);
   }
 
+  function portal(node: HTMLElement) {
+    document.body.appendChild(node);
+    return { destroy: () => node.remove() };
+  }
+
   $effect(() => {
     if (!mobileOpen) return;
     const onKeydown = (event: KeyboardEvent) => {
@@ -70,7 +75,7 @@
 
 <!-- Mobile drawer -->
 {#if mobileOpen}
-  <div class="fixed inset-0 z-[90] lg:hidden">
+  <div use:portal class="fixed inset-0 z-[90] lg:hidden">
     <button
       type="button"
       tabindex="-1"
