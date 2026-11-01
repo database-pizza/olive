@@ -1,9 +1,16 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import { cn } from '$lib/utils/cn.js';
-  interface Props { class?: string; children?: Snippet; }
-  let { class: className = '', children }: Props = $props();
+  interface Props { class?: string; divided?: boolean; children?: Snippet; }
+  let { class: className = '', divided = false, children }: Props = $props();
 </script>
-<div class={cn('flex items-center px-5 pb-5 pt-0', className)}>
+
+<div
+  class={cn(
+    'flex items-center gap-2 px-4 pb-4 pt-3 sm:px-5 sm:pb-5',
+    divided && 'border-t border-[var(--border)] pt-4',
+    className,
+  )}
+>
   {#if children}{@render children()}{/if}
 </div>

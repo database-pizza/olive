@@ -11,6 +11,7 @@
     class?: string;
     icon?: Snippet;
     onclick?: () => void;
+    external?: boolean;
   }
 
   let {
@@ -22,7 +23,25 @@
     class: className = '',
     icon,
     onclick,
+    external = false,
   }: Props = $props();
+
+  const itemClass = $derived(cn(
+    'group relative flex h-8 w-full items-center gap-2.5 rounded-[var(--radius-sm)] px-2',
+    'text-[13px] font-medium outline-none transition-[background-color,color,box-shadow]',
+    'duration-[var(--duration-fast)] ease-[var(--ease-move)]',
+    'focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--sidebar)]',
+    collapsed && 'justify-center px-0',
+    active
+      ? 'bg-[var(--brand-soft)] text-[var(--foreground)] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--brand)_18%,transparent)]'
+      : 'text-[var(--sidebar-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--foreground)]',
+    className,
+  ));
+
+  const iconClass = $derived(cn(
+    'flex size-4 shrink-0 items-center justify-center [&_svg]:size-4',
+    active ? 'text-[var(--brand-strong)] dark:text-[var(--brand)]' : 'opacity-80',
+  ));
 </script>
 
 {#if href}
@@ -30,31 +49,32 @@
     {href}
     aria-current={active ? 'page' : undefined}
     title={collapsed ? label : undefined}
-    class={cn(
-      'group relative flex items-center gap-3 rounded-[var(--radius)] px-2.5 py-2 text-sm font-medium',
-      'transition-colors duration-[150ms]',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
-      collapsed ? 'justify-center' : '',
-      active
-        ? 'bg-[var(--primary)]/10 text-[var(--primary)]'
-        : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]',
-      className
-    )}
+    target={external ? '_blank' : undefined}
+    rel={external ? 'noreferrer' : undefined}
+    class={itemClass}
   >
     {#if icon}
-      <span class="flex h-4 w-4 shrink-0 items-center justify-center">{@render icon()}</span>
+      <span class={iconClass}>{@render icon()}</span>
     {/if}
     {#if !collapsed}
-      <span class="flex-1 truncate">{label}</span>
+      <span class="min-w-0 flex-1 truncate">{label}</span>
       {#if badge !== undefined}
-        <span class={cn(
-          'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold',
-          active ? 'bg-[var(--primary)]/20 text-[var(--primary)]' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-        )}>{badge}</span>
+        <span
+          class={cn(
+            'olive-tnum flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold',
+            active
+              ? 'bg-[var(--brand)]/18 text-[var(--brand-strong)] dark:text-[var(--brand)]'
+              : 'bg-[var(--muted)] text-[var(--muted-foreground)]',
+          )}
+        >
+          {badge}
+        </span>
       {/if}
-    {/if}
-    {#if collapsed && badge !== undefined}
-      <span class="absolute right-1 top-1 flex h-2 w-2 items-center justify-center rounded-full bg-[var(--primary)]"></span>
+    {:else if badge !== undefined}
+      <span
+        class="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-[var(--brand)]"
+        aria-hidden="true"
+      ></span>
     {/if}
   </a>
 {:else}
@@ -62,31 +82,31 @@
     type="button"
     {onclick}
     title={collapsed ? label : undefined}
-    class={cn(
-      'group relative flex w-full items-center gap-3 rounded-[var(--radius)] px-2.5 py-2 text-sm font-medium',
-      'cursor-pointer transition-colors duration-[150ms]',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
-      collapsed ? 'justify-center' : '',
-      active
-        ? 'bg-[var(--primary)]/10 text-[var(--primary)]'
-        : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]',
-      className
-    )}
+    aria-current={active ? 'page' : undefined}
+    class={itemClass}
   >
     {#if icon}
-      <span class="flex h-4 w-4 shrink-0 items-center justify-center">{@render icon()}</span>
+      <span class={iconClass}>{@render icon()}</span>
     {/if}
     {#if !collapsed}
-      <span class="flex-1 truncate text-left">{label}</span>
+      <span class="min-w-0 flex-1 truncate text-left">{label}</span>
       {#if badge !== undefined}
-        <span class={cn(
-          'flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold',
-          active ? 'bg-[var(--primary)]/20 text-[var(--primary)]' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'
-        )}>{badge}</span>
+        <span
+          class={cn(
+            'olive-tnum flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold',
+            active
+              ? 'bg-[var(--brand)]/18 text-[var(--brand-strong)] dark:text-[var(--brand)]'
+              : 'bg-[var(--muted)] text-[var(--muted-foreground)]',
+          )}
+        >
+          {badge}
+        </span>
       {/if}
-    {/if}
-    {#if collapsed && badge !== undefined}
-      <span class="absolute right-1 top-1 flex h-2 w-2 items-center justify-center rounded-full bg-[var(--primary)]"></span>
+    {:else if badge !== undefined}
+      <span
+        class="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-[var(--brand)]"
+        aria-hidden="true"
+      ></span>
     {/if}
   </button>
 {/if}

@@ -14,12 +14,16 @@
   import Select   from '$lib/components/primitives/Select.svelte';
   import RadioGroup from '$lib/components/primitives/RadioGroup.svelte';
   import RadioItem  from '$lib/components/primitives/RadioItem.svelte';
+  import SegmentedControl from '$lib/components/primitives/SegmentedControl.svelte';
+  import Kbd from '$lib/components/primitives/Kbd.svelte';
+  import Spinner from '$lib/components/primitives/Spinner.svelte';
 
   let checked = $state(false);
   let switched = $state(false);
   let sliderVal = $state(40);
   let radioVal = $state('read');
   let selectVal = $state('');
+  let segmentVal = $state('day');
 </script>
 
 <div class="mx-auto max-w-3xl px-6 py-12 lg:px-10">
@@ -29,6 +33,67 @@
   </div>
 
   <div class="flex flex-col gap-10">
+
+    <DocBlock
+      name="Segmented Control"
+      description="A sliding choice for 2–5 mutually exclusive options. The pill is one object that travels, not a set of buttons that toggle."
+      code={`<SegmentedControl
+  bind:value={range}
+  options={[
+    { value: 'day', label: 'Day' },
+    { value: 'week', label: 'Week' },
+    { value: 'month', label: 'Month' },
+  ]}
+/>`}
+      props={[
+        { name: 'options', type: 'Array<{ value, label, icon?, disabled? }>', description: 'Choices, rendered in order' },
+        { name: 'value', type: 'string', description: 'Bindable selected value' },
+        { name: 'fullWidth', type: 'boolean', default: 'false', description: 'Stretch to the container' },
+      ]}
+    >
+      {#snippet preview()}
+        <SegmentedControl
+          bind:value={segmentVal}
+          options={[
+            { value: 'day', label: 'Day' },
+            { value: 'week', label: 'Week' },
+            { value: 'month', label: 'Month' },
+          ]}
+        />
+      {/snippet}
+    </DocBlock>
+
+    <Separator />
+
+    <DocBlock
+      name="Kbd"
+      description="A keycap for shortcuts and hints. Uses the mono face and a 1px physical edge."
+      code={`<Kbd>⌘</Kbd> <Kbd>K</Kbd>`}
+    >
+      {#snippet preview()}
+        <div class="flex items-center gap-2 text-xs text-[var(--muted-foreground)]">
+          Open the palette <Kbd>⌘</Kbd><Kbd>K</Kbd>
+        </div>
+      {/snippet}
+    </DocBlock>
+
+    <Separator />
+
+    <DocBlock
+      name="Spinner"
+      description="A quiet working indicator. Inherits its color from the parent."
+      code={`<Spinner />`}
+    >
+      {#snippet preview()}
+        <div class="flex items-center gap-3">
+          <Spinner size="sm" />
+          <Spinner />
+          <Spinner size="lg" />
+        </div>
+      {/snippet}
+    </DocBlock>
+
+    <Separator />
 
     <DocBlock
       name="Button"

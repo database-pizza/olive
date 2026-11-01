@@ -49,11 +49,11 @@
 
   <dl class="divide-y divide-[var(--border)]">
     {#each fields as field}
-      <div class="flex items-center justify-between gap-4 px-4 py-2.5">
+      <div class="flex flex-col gap-1 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <dt class="shrink-0 text-xs text-[var(--muted-foreground)]">{field.label}</dt>
-        <dd class="flex min-w-0 items-center gap-1.5">
+        <dd class="flex min-w-0 items-center gap-1.5 sm:justify-end">
           <span class={cn(
-            'truncate text-right text-xs text-[var(--foreground)]',
+            'truncate text-left text-xs text-[var(--foreground)] sm:text-right',
             field.mono && 'font-mono',
           )}>{field.value}</span>
           {#if field.copy}

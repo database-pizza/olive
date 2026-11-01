@@ -15,8 +15,10 @@
     id,
     'aria-describedby': ariaDescribedby,
     'aria-invalid': ariaInvalid,
+    rows = 3,
     ...rest
   }: Props = $props();
+
   const field = getContext<FormFieldContext | undefined>(formFieldContext);
 </script>
 
@@ -24,16 +26,21 @@
   id={id ?? field?.controlId}
   aria-describedby={ariaDescribedby ?? field?.descriptionId}
   aria-invalid={ariaInvalid ?? (field?.invalid ? 'true' : undefined)}
+  {rows}
   class={cn(
-    'flex min-h-[80px] w-full rounded-[var(--radius)] border bg-transparent px-3 py-2 text-sm',
-    'text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]',
-    'resize-y transition-colors duration-[150ms]',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)] focus-visible:ring-offset-0',
-    'disabled:cursor-not-allowed disabled:opacity-40',
+    'flex w-full min-w-0 resize-y border bg-[var(--card)] px-3 py-2 text-[13px] leading-relaxed',
+    'rounded-[var(--radius-button)] text-[var(--foreground)]',
+    'shadow-[var(--olive-shadow-xs),var(--olive-inset-highlight)]',
+    'outline-none transition-[border-color,box-shadow,background-color]',
+    'duration-[var(--duration-fast)] ease-[var(--ease-move)]',
+    'placeholder:text-[var(--subtle-foreground)]',
+    'hover:border-[var(--border-strong)]',
+    'focus:border-[var(--ring)] focus:ring-[3px] focus:ring-[color-mix(in_oklab,var(--ring)_18%,transparent)]',
+    'disabled:cursor-not-allowed disabled:bg-[var(--muted)] disabled:opacity-60',
     error || field?.invalid
-      ? 'border-[var(--destructive)] focus-visible:ring-[var(--destructive)]'
-      : 'border-[var(--border)] focus-visible:border-[var(--ring)]',
-    className
+      ? 'border-[color-mix(in_oklab,var(--destructive)_55%,transparent)] focus:border-[var(--destructive)]'
+      : 'border-[var(--input)]',
+    className,
   )}
   {...rest}
 ></textarea>

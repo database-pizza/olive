@@ -1,7 +1,9 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import { fade } from 'svelte/transition';
   import { cn } from '$lib/utils/cn.js';
   import { modal } from '$lib/utils/modal.js';
+  import { sheetIn, sheetOut } from '$lib/utils/transitions.js';
 
   type Side = 'left' | 'right' | 'top' | 'bottom';
 
@@ -28,6 +30,9 @@
   }: Props = $props();
 
   const sheetId = $props.id();
+  let dragY = $state(0);
+  let dragging = $state(false);
+  let dragStart = 0;
 
   function close() {
     open = false;
@@ -43,18 +48,31 @@
     return { destroy: () => node.remove() };
   }
 
-  const panelClasses: Record<Side, string> = {
-    right:  'inset-y-0 right-0 h-full w-full max-w-sm translate-x-0 border-l',
-    left:   'inset-y-0 left-0 h-full w-full max-w-sm border-r',
-    top:    'inset-x-0 top-0 w-full max-h-[60vh] border-b',
-    bottom: 'inset-x-0 bottom-0 w-full max-h-[60vh] border-t',
-  };
+  function onPointerDown(event: PointerEvent) {
+    if (event.pointerType === 'mouse' || side !== 'bottom') return;
+    dragging = true;
+    dragStart = event.clientY;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  }
 
-  const enterStyle: Record<Side, string> = {
-    right:  '--sheet-enter-x: 100%; --sheet-enter-y: 0;',
-    left:   '--sheet-enter-x: -100%; --sheet-enter-y: 0;',
-    top:    '--sheet-enter-x: 0; --sheet-enter-y: -100%;',
-    bottom: '--sheet-enter-x: 0; --sheet-enter-y: 100%;',
+  function onPointerMove(event: PointerEvent) {
+    if (!dragging) return;
+    dragY = Math.max(0, event.clientY - dragStart);
+  }
+
+  function onPointerUp() {
+    if (!dragging) return;
+    dragging = false;
+    if (dragY > 96) close();
+    dragY = 0;
+  }
+
+  const panelClasses: Record<Side, string> = {
+    right: 'inset-y-0 right-0 h-full w-full max-w-sm border-l',
+    left: 'inset-y-0 left-0 h-full w-full max-w-sm border-r',
+    top: 'inset-x-0 top-0 max-h-[75dvh] w-full rounded-b-[var(--radius-2xl)] border-b',
+    bottom:
+      'inset-x-0 bottom-0 max-h-[85dvh] w-full rounded-t-[var(--radius-2xl)] border-t olive-safe-bottom',
   };
 </script>
 
@@ -63,73 +81,80 @@
   <div
     use:portal
     role="presentation"
-    class="fixed inset-0 z-[100] flex"
+    class="fixed inset-0 z-[100]"
     onclick={handleBackdrop}
   >
-    <!-- Backdrop -->
-    <div class="pointer-events-none absolute inset-0 bg-black/40 backdrop-blur-sm animate-[fadeIn_200ms_ease-out]"></div>
-
-    <!-- Panel -->
     <div
-      use:modal={{ onEscape: close }}
+      class="absolute inset-0 bg-[oklch(0.15_0.01_100/0.44)] backdrop-blur-[2px]"
+      transition:fade={{ duration: 180 }}
+    ></div>
+
+    <div
+      use:modal={{ onEscape: close, initialFocus: '[data-autofocus], input:not([type="hidden"]):not(:disabled), textarea:not(:disabled), select:not(:disabled)' }}
       role="dialog"
       aria-modal="true"
       tabindex="-1"
       aria-labelledby={title ? `${sheetId}-title` : undefined}
       aria-describedby={description ? `${sheetId}-description` : undefined}
-      style={enterStyle[side]}
+      in:sheetIn={{ side }}
+      out:sheetOut={{ side }}
+      style:transform={dragY > 0 ? `translate3d(0, ${dragY}px, 0)` : undefined}
+      style:transition={dragging ? 'none' : undefined}
       class={cn(
-        'absolute flex flex-col bg-[var(--card)] border-[var(--border)]',
-        'shadow-[var(--shadow-lg)]',
-        'animate-[sheetIn_250ms_cubic-bezier(0.16,1,0.3,1)]',
+        'absolute flex flex-col overflow-hidden border-[var(--border)] bg-[var(--popover)]',
+        'shadow-[var(--olive-shadow-lg)]',
+        side === 'bottom' && 'h-auto',
         panelClasses[side],
-        className
+        className,
       )}
     >
-      <!-- Header -->
-      <div class="flex items-start justify-between gap-4 px-6 py-5 border-b border-[var(--border)]">
-        <div>
+      {#if side === 'bottom'}
+        <div
+          class="flex shrink-0 cursor-grab touch-none justify-center pt-2.5"
+          onpointerdown={onPointerDown}
+          onpointermove={onPointerMove}
+          onpointerup={onPointerUp}
+          onpointercancel={onPointerUp}
+          aria-hidden="true"
+        >
+          <span class="h-1 w-9 rounded-full bg-[var(--border-strong)]"></span>
+        </div>
+      {/if}
+
+      <div class="flex shrink-0 items-start justify-between gap-4 px-5 py-4">
+        <div class="min-w-0">
           {#if title}
-            <h2 id={`${sheetId}-title`} class="text-base font-semibold text-[var(--foreground)]">{title}</h2>
+            <h2 id={`${sheetId}-title`} class="text-[15px] font-semibold tracking-[-0.01em] text-[var(--foreground)]">
+              {title}
+            </h2>
           {/if}
           {#if description}
-            <p id={`${sheetId}-description`} class="mt-1 text-sm text-[var(--muted-foreground)]">{description}</p>
+            <p id={`${sheetId}-description`} class="mt-1 text-[13px] leading-relaxed text-[var(--muted-foreground)]">
+              {description}
+            </p>
           {/if}
         </div>
         <button
           type="button"
           onclick={close}
           aria-label="Close"
-          class="cursor-pointer shrink-0 flex h-7 w-7 items-center justify-center rounded-[var(--radius-button)] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors duration-[150ms] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]"
+          class="flex size-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] text-[var(--muted-foreground)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M18 6L6 18M6 6l12 12"/>
+            <path d="M18 6 6 18M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <!-- Body -->
-      <div class="flex-1 overflow-y-auto px-6 py-5">
+      <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-5">
         {#if children}{@render children()}{/if}
       </div>
 
-      <!-- Footer -->
       {#if footer}
-        <div class="flex items-center justify-end gap-2 border-t border-[var(--border)] px-6 py-4">
+        <div class="flex shrink-0 items-center justify-end gap-2 border-t border-[var(--border)] px-5 py-3">
           {@render footer()}
         </div>
       {/if}
     </div>
   </div>
 {/if}
-
-<style>
-  @keyframes -global-fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  @keyframes -global-sheetIn {
-    from { opacity: 0; transform: translate(var(--sheet-enter-x), var(--sheet-enter-y)); }
-    to   { opacity: 1; transform: translate(0, 0); }
-  }
-</style>

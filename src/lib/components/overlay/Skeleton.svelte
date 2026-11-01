@@ -5,26 +5,34 @@
     class?: string;
     width?: string;
     height?: string;
-    rounded?: boolean;
+    rounded?: boolean | 'sm' | 'md' | 'lg' | 'full';
   }
 
   let { class: className = '', width, height, rounded = false }: Props = $props();
+
+  const radius = $derived(
+    rounded === 'full'
+      ? 'rounded-full'
+      : rounded === 'sm'
+        ? 'rounded-[var(--radius-sm)]'
+        : rounded === 'md'
+          ? 'rounded-[var(--radius-button)]'
+          : rounded === 'lg'
+            ? 'rounded-[var(--radius-xl)]'
+            : rounded
+              ? 'rounded-[var(--radius)]'
+              : 'rounded-[var(--radius-sm)]',
+  );
 </script>
 
 <div
+  aria-hidden="true"
   class={cn(
-    'animate-[shimmer_1.8s_ease-in-out_infinite]',
-    'bg-[var(--muted)]',
-    rounded ? 'rounded-full' : 'rounded-[var(--radius)]',
-    className
+    'bg-[linear-gradient(90deg,var(--muted)_25%,var(--accent)_50%,var(--muted)_75%)] bg-[length:200%_100%]',
+    'animate-[olive-shimmer_1.8s_linear_infinite]',
+    radius,
+    className,
   )}
-  style:width={width}
+  style:width
   style:height={height ?? '1rem'}
 ></div>
-
-<style>
-  @keyframes -global-shimmer {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.5; }
-  }
-</style>

@@ -9,6 +9,8 @@
     disabled?: boolean;
     id?: string;
     class?: string;
+    showValue?: boolean;
+    'aria-label'?: string;
     onchange?: (value: number) => void;
   }
 
@@ -20,51 +22,72 @@
     disabled = false,
     id,
     class: className = '',
+    showValue = false,
+    'aria-label': ariaLabel,
     onchange,
   }: Props = $props();
 
   let dragging = $state(false);
-  let percent = $derived(((value - min) / (max - min)) * 100);
+  let percent = $derived(max > min ? ((value - min) / (max - min)) * 100 : 0);
 </script>
 
-<div class={cn('relative flex w-full touch-none select-none items-center h-5', className)}>
-  <!-- Track -->
-  <div class="relative h-1.5 w-full grow overflow-hidden rounded-full bg-[var(--muted)]">
-    <!-- Fill — no transition, must track pointer instantly -->
-    <div
-      class="absolute h-full bg-[var(--primary)]"
-      style:width="{percent}%"
-    ></div>
-  </div>
-
-  <!-- Native input — invisible, drives the value -->
-  <input
-    type="range"
-    {id}
-    {min}
-    {max}
-    {step}
-    {disabled}
-    bind:value
-    oninput={() => onchange?.(value)}
-    onpointerdown={() => { dragging = true; }}
-    onpointerup={() => { dragging = false; }}
-    class={cn(
-      'absolute inset-0 h-full w-full opacity-0',
-      disabled ? 'cursor-not-allowed' : 'cursor-pointer'
-    )}
-  />
-
-  <!-- Visual thumb — position is immediate, only scale animates on drag -->
+<div class={cn('relative flex w-full select-none flex-col gap-2', className)}>
+  {#if showValue}
+    <div class="flex items-center justify-between text-xs">
+      <span class="olive-tnum font-medium text-[var(--foreground)]">{value}</span>
+      <span class="text-[var(--subtle-foreground)]">{max}</span>
+    </div>
+  {/if}
   <div
-    class={cn(
-      'pointer-events-none absolute h-4 w-4 rounded-full',
-      'border-2 border-[var(--primary)] bg-[var(--background)]',
-      'shadow-[0_1px_3px_rgba(0,0,0,0.2)]',
-      'transition-transform duration-[100ms]',
-      dragging ? 'scale-125' : 'scale-100',
-      disabled && 'opacity-40'
-    )}
-    style:left="calc({percent}% - 8px)"
-  ></div>
+    class="group relative flex h-5 touch-none items-center"
+    class:opacity-45={disabled}
+  >
+    <div class="relative h-1.5 w-full overflow-hidden rounded-full bg-[var(--muted)]">
+      <div
+        class="absolute inset-y-0 left-0 rounded-full bg-[var(--brand)]"
+        style:width="{percent}%"
+      ></div>
+    </div>
+
+    <input
+      type="range"
+      {id}
+      {min}
+      {max}
+      {step}
+      {disabled}
+      aria-label={ariaLabel}
+      bind:value
+      oninput={() => onchange?.(value)}
+      onpointerdown={() => {
+        dragging = true;
+      }}
+      onpointerup={() => {
+        dragging = false;
+      }}
+      onpointercancel={() => {
+        dragging = false;
+      }}
+      onblur={() => {
+        dragging = false;
+      }}
+      class={cn(
+        'absolute inset-0 size-full cursor-pointer opacity-0',
+        disabled && 'cursor-not-allowed',
+      )}
+    />
+
+    <span
+      class={cn(
+        'pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 rounded-full',
+        'border border-[var(--border-strong)] bg-[var(--card)]',
+        'shadow-[0_1px_3px_oklch(0.2_0.01_100/0.22),var(--olive-inset-highlight)]',
+        'transition-[transform,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-spring)]',
+        dragging
+          ? 'scale-110 shadow-[0_0_0_4px_var(--brand-soft)]'
+          : 'group-hover:shadow-[0_0_0_3px_var(--brand-soft)]',
+      )}
+      style:left="calc({percent}% - 8px)"
+    ></span>
+  </div>
 </div>

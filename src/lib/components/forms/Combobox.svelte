@@ -185,7 +185,7 @@
             class={cn(
               'flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors duration-[100ms]',
               i === activeIndex ? 'bg-[var(--muted)]' : 'hover:bg-[var(--muted)]/60',
-              opt.value === value ? 'text-[var(--primary)] font-medium' : 'text-[var(--foreground)]'
+              opt.value === value ? 'text-[var(--brand)] font-medium' : 'text-[var(--foreground)]'
             )}
           >
             <span class="flex-1 text-left truncate">{opt.label}</span>

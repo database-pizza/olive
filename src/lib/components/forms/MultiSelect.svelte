@@ -245,7 +245,7 @@
             class={cn(
               'flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors duration-[100ms]',
               i === activeIndex ? 'bg-[var(--muted)]' : 'hover:bg-[var(--muted)]/60',
-              selected ? 'text-[var(--primary)] font-medium' : 'text-[var(--foreground)]',
+              selected ? 'text-[var(--brand)] font-medium' : 'text-[var(--foreground)]',
               atMax && 'opacity-40 cursor-not-allowed'
             )}
           >
@@ -253,7 +253,7 @@
               class={cn(
                 'flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-[3px] border transition-colors duration-[100ms]',
                 selected
-                  ? 'border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)]'
+                  ? 'border-[var(--brand)] bg-[var(--brand)] text-[var(--brand-foreground)]'
                   : 'border-[var(--border)]'
               )}
             >

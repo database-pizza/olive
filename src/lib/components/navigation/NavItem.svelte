@@ -26,7 +26,7 @@
     'transition-colors duration-[150ms]',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
     isActive
-      ? 'bg-[var(--primary)]/10 text-[var(--primary)]'
+      ? 'bg-[var(--brand)]/10 text-[var(--brand)]'
       : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]',
     className
   )}

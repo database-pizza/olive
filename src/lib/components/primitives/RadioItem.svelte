@@ -18,19 +18,24 @@
     children?: Snippet;
   }
 
-  let { value, disabled: localDisabled = false, id, class: className = '', children }: Props = $props();
+  let {
+    value,
+    disabled: localDisabled = false,
+    id,
+    class: className = '',
+    children,
+  }: Props = $props();
 
   const ctx = getContext<RadioGroupContext>('radio-group');
-
-  let checked = $derived(ctx.value === value);
-  let isDisabled = $derived(ctx.disabled || localDisabled);
+  const checked = $derived(ctx.value === value);
+  const isDisabled = $derived(ctx.disabled || localDisabled);
 </script>
 
 <label
   class={cn(
-    'flex items-center gap-2 cursor-pointer',
-    isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
-    className
+    'flex items-center gap-2.5 text-[13px] text-[var(--foreground)]',
+    isDisabled ? 'cursor-not-allowed opacity-45' : 'cursor-pointer',
+    className,
   )}
 >
   <input
@@ -41,22 +46,27 @@
     {checked}
     disabled={isDisabled}
     onchange={() => ctx.select(value)}
-    class="sr-only peer"
+    class="peer sr-only"
   />
-  <div
+  <span
+    aria-hidden="true"
     class={cn(
-      'h-4 w-4 rounded-full border border-[var(--border)]',
-      'flex items-center justify-center',
-      'transition-all duration-[150ms]',
-      'peer-focus-visible:ring-2 peer-focus-visible:ring-[color:var(--ring)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--background)]',
-      checked ? 'border-[var(--primary)]' : '',
+      'flex size-4 shrink-0 items-center justify-center rounded-full border bg-[var(--card)]',
+      'shadow-[var(--olive-inset-highlight)] transition-[border-color,box-shadow] duration-[var(--duration-fast)]',
+      'peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--ring)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--background)]',
+      checked
+        ? 'border-[var(--brand-strong)] shadow-[0_0_0_3px_var(--brand-soft)]'
+        : 'border-[var(--input)] hover:border-[var(--border-strong)]',
     )}
   >
-    {#if checked}
-      <div class="h-2 w-2 rounded-full bg-[var(--primary)]"></div>
-    {/if}
-  </div>
+    <span
+      class={cn(
+        'size-1.5 rounded-full bg-[var(--brand-strong)] transition-transform duration-[var(--duration-fast)] ease-[var(--ease-spring)]',
+        checked ? 'scale-100' : 'scale-0',
+      )}
+    ></span>
+  </span>
   {#if children}
-    <span class="text-sm text-[var(--foreground)]">{@render children()}</span>
+    <span>{@render children()}</span>
   {/if}
 </label>

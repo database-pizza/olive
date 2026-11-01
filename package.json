@@ -1,6 +1,6 @@
 {
 	"name": "@database.pizza/olive",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -20,7 +20,9 @@
 		},
 		"./styles": "./dist/styles.css",
 		"./tokens": "./dist/tokens.css",
-		"./tokens.css": "./dist/tokens.css"
+		"./tokens.css": "./dist/tokens.css",
+		"./theme": "./dist/theme.css",
+		"./theme.css": "./dist/theme.css"
 	},
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",

@@ -7,67 +7,87 @@
     disabled?: boolean;
     id?: string;
     class?: string;
+    'aria-label'?: string;
     onchange?: (checked: boolean) => void;
   }
 
   let {
     checked = $bindable(false),
-    indeterminate = false,
+    indeterminate = $bindable(false),
     disabled = false,
     id,
     class: className = '',
+    'aria-label': ariaLabel,
     onchange,
   }: Props = $props();
 
-  function handleChange(e: Event) {
-    const input = e.target as HTMLInputElement;
+  let input: HTMLInputElement | undefined = $state();
+
+  $effect(() => {
+    if (input) input.indeterminate = indeterminate;
+  });
+
+  function handleChange() {
+    if (!input) return;
     checked = input.checked;
+    indeterminate = false;
     onchange?.(checked);
   }
 </script>
 
 <label
   class={cn(
-    'relative inline-flex items-center justify-center',
-    disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
-    className
+    'group relative inline-flex size-4 shrink-0 items-center justify-center',
+    disabled ? 'cursor-not-allowed opacity-45' : 'cursor-pointer',
+    className,
   )}
 >
   <input
+    bind:this={input}
     type="checkbox"
     {id}
     {disabled}
-    bind:checked
-    bind:indeterminate
+    {checked}
+    aria-label={ariaLabel}
+    aria-checked={indeterminate ? 'mixed' : checked}
     onchange={handleChange}
-    class="sr-only peer"
+    class="peer sr-only"
   />
-  <div
+  <span
+    aria-hidden="true"
     class={cn(
-      'h-4 w-4 rounded-[3px] border',
-      'flex items-center justify-center overflow-hidden',
-      'transition-colors duration-[100ms]',
-      'peer-focus-visible:ring-2 peer-focus-visible:ring-[color:var(--ring)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--background)]',
+      'relative flex size-4 items-center justify-center overflow-hidden rounded-[5px] border',
+      'shadow-[var(--olive-inset-highlight)]',
+      'transition-[background-color,border-color,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-move)]',
+      'peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--ring)] peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[var(--background)]',
+      'group-hover:border-[var(--border-strong)]',
       checked || indeterminate
-        ? 'bg-[var(--primary)] border-[var(--primary)]'
-        : 'bg-transparent border-[var(--border)]',
+        ? 'border-[var(--brand-strong)] bg-[var(--brand)] text-[var(--brand-foreground)] group-hover:border-[var(--brand-strong)]'
+        : 'border-[var(--input)] bg-[var(--card)]',
     )}
   >
     <svg
-      width="10"
-      height="8"
-      viewBox="0 0 10 8"
+      viewBox="0 0 12 10"
       fill="none"
       class={cn(
-        'transition-[transform,opacity] duration-[100ms]',
-        checked ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
+        'relative z-10 size-2.5 transition-[opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-spring)]',
+        checked || indeterminate ? 'scale-100 opacity-100' : 'scale-75 opacity-0',
       )}
+      aria-hidden="true"
     >
       {#if indeterminate}
-        <path d="M1 4H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M2 5h8" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
       {:else}
-        <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path
+          d="M1.5 5.2 4.4 8 10.5 2"
+          stroke="currentColor"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-dasharray="13"
+          style:animation={checked ? 'olive-draw-check 220ms var(--olive-ease-enter) both' : 'none'}
+        />
       {/if}
     </svg>
-  </div>
+  </span>
 </label>

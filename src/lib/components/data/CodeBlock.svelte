@@ -1,55 +1,55 @@
 <script lang="ts">
   import { cn } from '$lib/utils/cn.js';
+  import CopyButton from './CopyButton.svelte';
 
   interface Props {
     code: string;
     language?: string;
+    filename?: string;
     class?: string;
+    showLineNumbers?: boolean;
+    maxHeight?: string;
   }
 
-  let { code, language, class: className = '' }: Props = $props();
+  let {
+    code,
+    language,
+    filename,
+    class: className = '',
+    showLineNumbers = false,
+    maxHeight,
+  }: Props = $props();
 
-  let copied = $state(false);
-
-  async function copy() {
-    await navigator.clipboard.writeText(code);
-    copied = true;
-    setTimeout(() => { copied = false; }, 2000);
-  }
+  const lines = $derived(code.split('\n'));
 </script>
 
-<div class={cn('relative rounded-[var(--radius)] border border-[var(--border)] bg-[var(--muted)]/50 overflow-hidden', className)}>
-  <!-- Header bar -->
-  <div class="flex items-center justify-between px-4 py-2 border-b border-[var(--border)]">
-    {#if language}
-      <span class="text-xs font-mono text-[var(--muted-foreground)] uppercase tracking-wide">{language}</span>
+<div
+  class={cn(
+    'overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--code)]',
+    'shadow-[var(--olive-shadow-xs),var(--olive-inset-highlight)]',
+    className,
+  )}
+>
+  <div class="flex h-8 items-center gap-2 border-b border-[var(--border)] pl-3 pr-1.5">
+    {#if filename}
+      <span class="truncate font-mono text-[11px] text-[var(--foreground)]">{filename}</span>
+    {:else if language}
+      <span class="font-mono text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--subtle-foreground)]">
+        {language}
+      </span>
     {:else}
-      <span></span>
+      <span class="flex gap-1" aria-hidden="true">
+        <span class="size-1.5 rounded-full bg-[var(--border-strong)]"></span>
+        <span class="size-1.5 rounded-full bg-[var(--border-strong)]"></span>
+        <span class="size-1.5 rounded-full bg-[var(--border-strong)]"></span>
+      </span>
     {/if}
-    <button
-      type="button"
-      onclick={copy}
-      aria-label="Copy code"
-      class={cn(
-        'flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
-        'cursor-pointer transition-colors duration-[150ms]',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)] rounded'
-      )}
-    >
-      {#if copied}
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
-        Copied
-      {:else}
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-        </svg>
-        Copy
-      {/if}
-    </button>
+    <div class="ml-auto">
+      <CopyButton value={code} label="Copy code" copiedLabel="Copied" />
+    </div>
   </div>
 
-  <!-- Code -->
-  <pre class="overflow-x-auto px-4 py-3 text-sm font-mono text-[var(--foreground)] leading-relaxed"><code>{code}</code></pre>
+  <pre
+    class="overflow-auto px-3 py-3 font-mono text-[12px] leading-[1.65] text-[var(--code-foreground)]"
+    style:max-height={maxHeight}><code class="grid">{#if showLineNumbers}{#each lines as line, i}<span class="grid grid-cols-[2.25rem_1fr] gap-2"><span class="select-none text-right text-[var(--subtle-foreground)]">{i + 1}</span><span class="whitespace-pre">{line || ' '}</span></span>{/each}{:else}<span class="whitespace-pre">{code}</span>{/if}</code></pre>
 </div>

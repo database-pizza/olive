@@ -43,7 +43,7 @@
   ondrop={handleDrop}
   class={cn(
     'flex w-72 shrink-0 flex-col rounded-[var(--radius)] border bg-[var(--muted)]/30 transition-colors duration-[150ms]',
-    over ? 'border-[var(--primary)]/60 bg-[var(--primary)]/5' : 'border-[var(--border)]',
+    over ? 'border-[var(--brand)]/60 bg-[var(--brand)]/5' : 'border-[var(--border)]',
     className
   )}
 >
@@ -64,7 +64,7 @@
     {/if}
 
     {#if over}
-      <div role="presentation" class="rounded-[var(--radius)] border-2 border-dashed border-[var(--primary)]/40 h-14 transition-all duration-[150ms]"></div>
+      <div role="presentation" class="rounded-[var(--radius)] border-2 border-dashed border-[var(--brand)]/40 h-14 transition-all duration-[150ms]"></div>
     {/if}
   </div>
 </div>

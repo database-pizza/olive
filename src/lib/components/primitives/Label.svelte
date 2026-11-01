@@ -8,20 +8,24 @@
   interface Props extends HTMLLabelAttributes {
     class?: string;
     children?: Snippet;
+    optional?: boolean;
   }
 
-  let { class: className = '', children, for: htmlFor, ...rest }: Props = $props();
+  let { class: className = '', children, for: htmlFor, optional = false, ...rest }: Props = $props();
   const field = getContext<FormFieldContext | undefined>(formFieldContext);
 </script>
 
 <label
   for={htmlFor ?? field?.controlId}
   class={cn(
-    'text-sm font-medium text-[var(--foreground)] leading-none',
-    'peer-disabled:cursor-not-allowed peer-disabled:opacity-40',
-    className
+    'flex items-center gap-1.5 text-xs font-medium text-[var(--foreground)] leading-none',
+    'peer-disabled:cursor-not-allowed peer-disabled:opacity-45',
+    className,
   )}
   {...rest}
 >
   {#if children}{@render children()}{/if}
+  {#if optional}
+    <span class="font-normal text-[var(--subtle-foreground)]">Optional</span>
+  {/if}
 </label>
