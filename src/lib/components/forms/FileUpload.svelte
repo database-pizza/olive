@@ -58,8 +58,8 @@
     'rounded-[var(--radius)] border-2 border-dashed',
     'px-6 py-10 text-center transition-colors duration-[150ms]',
     dragging
-      ? 'border-[var(--primary)] bg-[var(--primary)]/5'
-      : 'border-[var(--border)] bg-transparent hover:border-[var(--primary)]/50 hover:bg-[var(--muted)]/40',
+      ? 'border-[var(--brand)] bg-[var(--brand)]/5'
+      : 'border-[var(--border)] bg-transparent hover:border-[var(--brand)]/50 hover:bg-[var(--muted)]/40',
     disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
     className
   )}

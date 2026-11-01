@@ -17,12 +17,11 @@
 
   let theme = $state<Theme>(getInitialTheme());
 
-  function applyTheme(t: Theme) {
+  function applyTheme(value: Theme) {
     if (!browser) return;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = t === 'dark' || (t === 'system' && prefersDark);
-    document.documentElement.classList.toggle('dark', isDark);
-    localStorage.setItem('olive-theme', t);
+    document.documentElement.classList.toggle('dark', value === 'dark' || (value === 'system' && prefersDark));
+    localStorage.setItem('olive-theme', value);
   }
 
   function cycle() {
@@ -37,45 +36,44 @@
 
   $effect(() => {
     if (!browser) return;
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = () => { if (theme === 'system') applyTheme('system'); };
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = () => {
+      if (theme === 'system') applyTheme('system');
+    };
+    media.addEventListener('change', handler);
+    return () => media.removeEventListener('change', handler);
   });
 </script>
 
 <button
   type="button"
   onclick={cycle}
-  aria-label="Toggle theme (current: {theme})"
-  title="Toggle theme"
+  aria-label="Change theme (current: {theme})"
+  title="Theme: {theme}"
   class={cn(
-    'relative flex h-8 w-8 items-center justify-center rounded-[var(--radius)]',
-    'cursor-pointer text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]',
-    'transition-all duration-[150ms]',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
-    className
+    'group relative flex size-8 items-center justify-center rounded-[var(--radius-sm)]',
+    'text-[var(--muted-foreground)] outline-none transition-colors',
+    'hover:bg-[var(--accent)] hover:text-[var(--foreground)]',
+    'focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+    className,
   )}
 >
-  <!-- Sun icon -->
   <svg
-    class={cn('absolute transition-all duration-[200ms]', theme === 'light' ? 'opacity-100 scale-100' : 'opacity-0 scale-75')}
-    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+    class={cn('absolute size-4 transition-[opacity,transform] duration-[var(--duration-fast)]', theme === 'light' ? 'scale-100 opacity-100' : 'scale-75 opacity-0')}
+    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
   >
-    <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+    <circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
   </svg>
-  <!-- Moon icon -->
   <svg
-    class={cn('absolute transition-all duration-[200ms]', theme === 'dark' ? 'opacity-100 scale-100' : 'opacity-0 scale-75')}
-    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+    class={cn('absolute size-4 transition-[opacity,transform] duration-[var(--duration-fast)]', theme === 'dark' ? 'scale-100 opacity-100' : 'scale-75 opacity-0')}
+    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
   >
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
   </svg>
-  <!-- System/monitor icon -->
   <svg
-    class={cn('absolute transition-all duration-[200ms]', theme === 'system' ? 'opacity-100 scale-100' : 'opacity-0 scale-75')}
-    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+    class={cn('absolute size-4 transition-[opacity,transform] duration-[var(--duration-fast)]', theme === 'system' ? 'scale-100 opacity-100' : 'scale-75 opacity-0')}
+    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
   >
-    <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+    <rect x="2.5" y="3.5" width="19" height="13" rx="2" /><path d="M8 20.5h8M12 16.5v4" />
   </svg>
 </button>

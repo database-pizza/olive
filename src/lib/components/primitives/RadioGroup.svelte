@@ -23,10 +23,19 @@
     onchange,
   }: Props = $props();
 
+  const groupId = $props.id();
+  const groupName = $derived(name || `olive-radio-${groupId}`);
+
   setContext('radio-group', {
-    get value() { return value; },
-    get name() { return name; },
-    get disabled() { return disabled; },
+    get value() {
+      return value;
+    },
+    get name() {
+      return groupName;
+    },
+    get disabled() {
+      return disabled;
+    },
     select: (v: string) => {
       value = v;
       onchange?.(v);
@@ -36,11 +45,7 @@
 
 <div
   role="radiogroup"
-  class={cn(
-    'flex gap-2',
-    orientation === 'vertical' ? 'flex-col' : 'flex-row flex-wrap',
-    className
-  )}
+  class={cn('flex gap-2', orientation === 'vertical' ? 'flex-col' : 'flex-row flex-wrap', className)}
 >
   {#if children}{@render children()}{/if}
 </div>

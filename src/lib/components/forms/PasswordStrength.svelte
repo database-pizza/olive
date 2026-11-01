@@ -42,10 +42,10 @@
   const labels = ['Too short', 'Weak', 'Fair', 'Good', 'Strong'];
   const colors = [
     'bg-[var(--muted)]',
-    'bg-red-500',
-    'bg-amber-500',
-    'bg-sky-500',
-    'bg-emerald-500',
+    'bg-[var(--destructive)]',
+    'bg-[var(--warning)]',
+    'bg-[var(--info)]',
+    'bg-[var(--success)]',
   ];
 
   let hints = $derived(
@@ -61,6 +61,7 @@
 </script>
 
 <div class={cn('flex flex-col gap-1.5', className)}>
+  {#if password}
   <div class="flex items-center gap-2">
     <div class="flex flex-1 gap-1" aria-hidden="true">
       {#each [1, 2, 3, 4] as segment}
@@ -76,6 +77,7 @@
       {password ? labels[score] : ''}
     </span>
   </div>
+  {/if}
   {#if showHints && hints.length > 0 && password}
     <ul class="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-[var(--muted-foreground)]">
       {#each hints.slice(0, 3) as hint}

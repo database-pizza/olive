@@ -15,7 +15,7 @@
     label = 'Copy',
     copiedLabel = 'Copied',
     class: className = '',
-    size = 14,
+    size = 13,
   }: Props = $props();
 
   let copied = $state(false);
@@ -27,7 +27,7 @@
       await navigator.clipboard.writeText(value);
       copied = true;
       if (timer) clearTimeout(timer);
-      timer = setTimeout(() => (copied = false), 1500);
+      timer = setTimeout(() => (copied = false), 1600);
     } catch {
       copied = false;
     }
@@ -40,15 +40,17 @@
     onclick={copy}
     aria-label={copied ? copiedLabel : label}
     class={cn(
-      'inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[calc(var(--radius)*0.5)]',
-      'text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
+      'inline-flex size-6 shrink-0 items-center justify-center rounded-[var(--radius-xs)]',
+      'text-[var(--muted-foreground)] outline-none transition-[background-color,color,transform]',
+      'duration-[var(--duration-fast)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]',
+      'active:scale-90 focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+      copied && 'text-[var(--success-foreground-soft)] hover:text-[var(--success-foreground-soft)]',
       className,
     )}
   >
     {#if copied}
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M20 6L9 17l-5-5" />
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 6 9 17l-5-5" />
       </svg>
     {:else}
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

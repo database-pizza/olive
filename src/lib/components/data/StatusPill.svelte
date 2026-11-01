@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cn } from '$lib/utils/cn.js';
 
-  type Tone = 'neutral' | 'success' | 'warning' | 'danger' | 'info';
+  type Tone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'brand';
   type Size = 'sm' | 'md';
 
   interface Props {
@@ -23,19 +23,21 @@
   }: Props = $props();
 
   const tones: Record<Tone, string> = {
-    neutral: 'bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)]',
-    success: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25',
-    warning: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25',
-    danger: 'bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25',
-    info: 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/25',
+    neutral: 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]',
+    success: 'border-[color-mix(in_oklab,var(--success)_28%,transparent)] bg-[var(--success-soft)] text-[var(--success-foreground-soft)]',
+    warning: 'border-[color-mix(in_oklab,var(--warning)_30%,transparent)] bg-[var(--warning-soft)] text-[var(--warning-foreground-soft)]',
+    danger: 'border-[color-mix(in_oklab,var(--destructive)_28%,transparent)] bg-[var(--destructive-soft)] text-[var(--destructive-foreground-soft)]',
+    info: 'border-[color-mix(in_oklab,var(--info)_28%,transparent)] bg-[var(--info-soft)] text-[var(--info-foreground-soft)]',
+    brand: 'border-[color-mix(in_oklab,var(--brand)_28%,transparent)] bg-[var(--brand-soft)] text-[var(--brand-strong)] dark:text-[var(--brand)]',
   };
 
   const dots: Record<Tone, string> = {
     neutral: 'bg-[var(--muted-foreground)]',
-    success: 'bg-emerald-500',
-    warning: 'bg-amber-500',
-    danger: 'bg-red-500',
-    info: 'bg-sky-500',
+    success: 'bg-[var(--success)]',
+    warning: 'bg-[var(--warning)]',
+    danger: 'bg-[var(--destructive)]',
+    info: 'bg-[var(--info)]',
+    brand: 'bg-[var(--brand)]',
   };
 
   const sizes: Record<Size, string> = {
@@ -46,18 +48,18 @@
 
 <span
   class={cn(
-    'inline-flex items-center rounded-full border font-medium whitespace-nowrap',
+    'inline-flex items-center whitespace-nowrap rounded-full border font-medium',
     tones[tone],
     sizes[size],
     className,
   )}
 >
   {#if dot}
-    <span class="relative flex h-1.5 w-1.5">
+    <span class="relative flex size-1.5 shrink-0">
       {#if pulse}
-        <span class={cn('absolute inline-flex h-full w-full animate-ping rounded-full opacity-60', dots[tone])}></span>
+        <span class={cn('absolute inline-flex size-full animate-ping rounded-full opacity-60', dots[tone])}></span>
       {/if}
-      <span class={cn('relative inline-flex h-1.5 w-1.5 rounded-full', dots[tone])}></span>
+      <span class={cn('relative inline-flex size-1.5 rounded-full', dots[tone])}></span>
     </span>
   {/if}
   {label}

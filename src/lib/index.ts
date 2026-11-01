@@ -12,6 +12,9 @@ export { default as Slider }     from './components/primitives/Slider.svelte';
 export { default as Select }     from './components/primitives/Select.svelte';
 export { default as RadioGroup } from './components/primitives/RadioGroup.svelte';
 export { default as RadioItem }  from './components/primitives/RadioItem.svelte';
+export { default as Spinner }    from './components/primitives/Spinner.svelte';
+export { default as Kbd }        from './components/primitives/Kbd.svelte';
+export { default as SegmentedControl } from './components/primitives/SegmentedControl.svelte';
 
 // Layout
 export { default as Card }             from './components/layout/Card.svelte';
@@ -25,6 +28,17 @@ export { default as PageHeader }       from './components/layout/PageHeader.svel
 export { default as Tabs }             from './components/layout/Tabs.svelte';
 export { default as Breadcrumbs }      from './components/layout/Breadcrumbs.svelte';
 export { default as PageToolbar }      from './components/layout/PageToolbar.svelte';
+export { default as CardAction }       from './components/layout/CardAction.svelte';
+export { default as Frame }            from './components/layout/Frame.svelte';
+export { default as FramePanel }       from './components/layout/FramePanel.svelte';
+export { default as FrameHeader }      from './components/layout/FrameHeader.svelte';
+export { default as FrameTitle }       from './components/layout/FrameTitle.svelte';
+export { default as FrameDescription } from './components/layout/FrameDescription.svelte';
+export { default as FrameFooter }      from './components/layout/FrameFooter.svelte';
+export { default as SectionHeader }    from './components/layout/SectionHeader.svelte';
+export { default as SettingsList }     from './components/layout/SettingsList.svelte';
+export { default as SettingRow }       from './components/layout/SettingRow.svelte';
+export { default as AppShell }         from './components/layout/AppShell.svelte';
 
 // Navigation
 export { default as Navbar }      from './components/navigation/Navbar.svelte';

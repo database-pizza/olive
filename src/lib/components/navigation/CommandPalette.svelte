@@ -1,7 +1,8 @@
 <script lang="ts">
   import { cn } from '$lib/utils/cn.js';
-  import { browser } from '$app/environment';
   import { modal } from '$lib/utils/modal.js';
+  import { surfaceIn, surfaceOut } from '$lib/utils/transitions.js';
+  import { fade } from 'svelte/transition';
 
   interface CommandItem {
     id: string;
@@ -17,6 +18,7 @@
     items: CommandItem[];
     placeholder?: string;
     open?: boolean;
+    shortcut?: boolean;
     onclose?: () => void;
   }
 
@@ -24,11 +26,13 @@
     items,
     placeholder = 'Search…',
     open = $bindable(false),
+    shortcut = true,
     onclose,
   }: Props = $props();
 
   let query = $state('');
   let activeIndex = $state(0);
+  let listEl = $state<HTMLElement | null>(null);
   const paletteId = $props.id();
   const listboxId = `${paletteId}-listbox`;
 
@@ -39,32 +43,60 @@
     onclose?.();
   }
 
-  let filtered = $derived.by(() => {
+  const filtered = $derived.by(() => {
     if (!query.trim()) return items;
     const q = query.toLowerCase();
     return items.filter(
-      i => i.label.toLowerCase().includes(q) || i.description?.toLowerCase().includes(q)
+      (item) =>
+        item.label.toLowerCase().includes(q) ||
+        item.description?.toLowerCase().includes(q) ||
+        item.group?.toLowerCase().includes(q),
     );
   });
 
-  let groups = $derived.by(() => {
+  const groups = $derived.by(() => {
     const map = new Map<string, CommandItem[]>();
     for (const item of filtered) {
-      const g = item.group ?? '';
-      if (!map.has(g)) map.set(g, []);
-      map.get(g)!.push(item);
+      const group = item.group ?? '';
+      if (!map.has(group)) map.set(group, []);
+      map.get(group)!.push(item);
     }
     return map;
   });
 
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
+  $effect(() => {
+    query;
+    activeIndex = 0;
+  });
+
+  $effect(() => {
+    if (!open) return;
+    const container = listEl?.querySelector<HTMLElement>(`#${CSS.escape(`${paletteId}-option-${activeIndex}`)}`);
+    container?.scrollIntoView({ block: 'nearest' });
+  });
+
+  $effect(() => {
+    if (!shortcut || typeof window === 'undefined') return;
+    const handler = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        if (open) close();
+        else open = true;
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  });
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
       activeIndex = Math.min(activeIndex + 1, filtered.length - 1);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
       activeIndex = Math.max(activeIndex - 1, 0);
-    } else if (e.key === 'Enter') {
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
       const item = filtered[activeIndex];
       if (item) {
         item.onselect();
@@ -72,24 +104,6 @@
       }
     }
   }
-
-  $effect(() => {
-    if (!browser) return;
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        if (open) close();
-        else open = true;
-      }
-    };
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-  });
-
-  $effect(() => {
-    query;
-    activeIndex = 0;
-  });
 
   function portal(node: HTMLElement) {
     document.body.appendChild(node);
@@ -106,10 +120,13 @@
   <div
     use:portal
     role="presentation"
-    class="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4"
+    class="fixed inset-0 z-[120] flex items-start justify-center px-3 pt-[8vh] sm:p-4 sm:pt-[12vh]"
     onclick={handleBackdrop}
   >
-    <div class="pointer-events-none absolute inset-0 bg-black/40 backdrop-blur-sm animate-[fadeIn_150ms_ease-out]"></div>
+    <div
+      class="absolute inset-0 bg-[oklch(0.15_0.01_100/0.42)] backdrop-blur-[3px]"
+      transition:fade={{ duration: 170 }}
+    ></div>
 
     <div
       use:modal={{ onEscape: close, initialFocus: 'input' }}
@@ -117,17 +134,26 @@
       aria-modal="true"
       aria-label="Command palette"
       tabindex="-1"
+      in:surfaceIn
+      out:surfaceOut
       class={cn(
-        'relative z-10 w-full max-w-lg overflow-hidden',
-        'rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card)]',
-        'shadow-[var(--shadow-lg)]',
-        'animate-[slideUpFadeIn_200ms_cubic-bezier(0.16,1,0.3,1)]'
+        'relative z-10 flex max-h-[min(560px,calc(100dvh-2rem))] w-full max-w-lg flex-col overflow-hidden',
+        'rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--popover)]',
+        'shadow-[var(--olive-shadow-lg)]',
       )}
     >
-      <!-- Search input -->
-      <div class="flex items-center gap-3 border-b border-[var(--border)] px-4">
-        <svg class="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      <div class="flex shrink-0 items-center gap-2.5 border-b border-[var(--border)] px-3.5">
+        <svg
+          class="size-4 shrink-0 text-[var(--muted-foreground)]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
         </svg>
         <input
           bind:value={query}
@@ -140,63 +166,83 @@
           aria-activedescendant={filtered.length > 0 ? `${paletteId}-option-${activeIndex}` : undefined}
           aria-label="Search commands"
           onkeydown={handleKeydown}
-          class="flex-1 bg-transparent py-4 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none"
+          class="h-12 min-w-0 flex-1 bg-transparent text-sm text-[var(--foreground)] outline-none placeholder:text-[var(--subtle-foreground)]"
         />
-        <kbd class="hidden sm:flex items-center gap-1 rounded border border-[var(--border)] bg-[var(--muted)] px-1.5 py-0.5 text-xs text-[var(--muted-foreground)]">Esc</kbd>
+        <kbd class="hidden shrink-0 rounded-[5px] border border-[var(--border)] bg-[var(--muted)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--muted-foreground)] sm:block">
+          Esc
+        </kbd>
       </div>
 
-      <!-- Results -->
-      <div id={listboxId} class="max-h-[340px] overflow-y-auto py-2" role="listbox" aria-label="Commands">
+      <div
+        id={listboxId}
+        bind:this={listEl}
+        class="min-h-0 flex-1 overflow-y-auto overscroll-contain p-1.5"
+        role="listbox"
+        aria-label="Commands"
+      >
         {#if filtered.length === 0}
-          <p class="px-4 py-10 text-center text-sm text-[var(--muted-foreground)]">No results for "{query}"</p>
+          <div class="flex flex-col items-center gap-1 px-4 py-12 text-center">
+            <p class="text-[13px] font-medium text-[var(--foreground)]">No results</p>
+            <p class="text-xs text-[var(--muted-foreground)]">Nothing matches “{query}”.</p>
+          </div>
         {:else}
           {#each groups as [group, groupItems]}
             {#if group}
-              <p class="px-4 pt-3 pb-1 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">{group}</p>
+              <p class="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--subtle-foreground)]">
+                {group}
+              </p>
             {/if}
-            {#each groupItems as item, i}
+            {#each groupItems as item}
               {@const idx = filtered.indexOf(item)}
               <button
                 id={`${paletteId}-option-${idx}`}
+                type="button"
                 role="option"
                 aria-selected={idx === activeIndex}
                 tabindex="-1"
-                onclick={() => { item.onselect(); close(); }}
-                onmouseenter={() => { activeIndex = idx; }}
+                onclick={() => {
+                  item.onselect();
+                  close();
+                }}
+                onmouseenter={() => {
+                  activeIndex = idx;
+                }}
                 class={cn(
-                  'flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-[100ms]',
+                  'flex w-full items-center gap-2.5 rounded-[var(--radius-sm)] px-2 py-2 text-left text-[13px] outline-none transition-colors',
                   idx === activeIndex
-                    ? 'bg-[var(--muted)] text-[var(--foreground)]'
-                    : 'text-[var(--foreground)] hover:bg-[var(--muted)]/60'
+                    ? 'bg-[var(--accent)] text-[var(--foreground)]'
+                    : 'text-[var(--foreground)] hover:bg-[var(--accent)]',
                 )}
               >
                 {#if item.icon}
-                  <span class="text-base leading-none">{item.icon}</span>
+                  <span class="text-sm leading-none" aria-hidden="true">{item.icon}</span>
+                {:else}
+                  <span class="flex size-4 items-center justify-center text-[var(--muted-foreground)]" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </span>
                 {/if}
-                <div class="flex-1 min-w-0 text-left">
+                <span class="min-w-0 flex-1">
                   <span class="block truncate font-medium">{item.label}</span>
                   {#if item.description}
-                    <span class="block truncate text-xs text-[var(--muted-foreground)]">{item.description}</span>
+                    <span class="block truncate text-[11px] text-[var(--muted-foreground)]">{item.description}</span>
                   {/if}
-                </div>
+                </span>
                 {#if item.shortcut}
-                  <kbd class="shrink-0 rounded border border-[var(--border)] bg-[var(--muted)] px-1.5 py-0.5 text-xs text-[var(--muted-foreground)]">{item.shortcut}</kbd>
+                  <kbd class="shrink-0 font-mono text-[10px] text-[var(--subtle-foreground)]">{item.shortcut}</kbd>
                 {/if}
               </button>
             {/each}
           {/each}
         {/if}
       </div>
+
+      <div class="hidden shrink-0 items-center gap-3 border-t border-[var(--border)] px-3.5 py-2 text-[10px] text-[var(--subtle-foreground)] sm:flex">
+        <span class="flex items-center gap-1"><kbd class="font-mono">↑↓</kbd> navigate</span>
+        <span class="flex items-center gap-1"><kbd class="font-mono">↵</kbd> open</span>
+        <span class="flex items-center gap-1"><kbd class="font-mono">esc</kbd> close</span>
+      </div>
     </div>
   </div>
 {/if}
-
-<style>
-  @keyframes -global-fadeIn {
-    from { opacity: 0; } to { opacity: 1; }
-  }
-  @keyframes -global-slideUpFadeIn {
-    from { opacity: 0; transform: translateY(-8px) scale(0.98); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-</style>

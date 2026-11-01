@@ -13,6 +13,10 @@
   import Tabs from '$lib/components/layout/Tabs.svelte';
   import Breadcrumbs from '$lib/components/layout/Breadcrumbs.svelte';
   import ScrollArea from '$lib/components/layout/ScrollArea.svelte';
+  import Frame from '$lib/components/layout/Frame.svelte';
+  import FramePanel from '$lib/components/layout/FramePanel.svelte';
+  import SettingsList from '$lib/components/layout/SettingsList.svelte';
+  import SettingRow from '$lib/components/layout/SettingRow.svelte';
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
@@ -28,6 +32,46 @@
   </div>
 
   <div class="flex flex-col gap-10">
+
+    <DocBlock
+      name="Frame"
+      description="A quiet gutter that groups panels without nesting cards. Use it for settings, metrics and related surfaces that belong together."
+      code={`<Frame>
+  <FramePanel>General</FramePanel>
+  <FramePanel>Backups</FramePanel>
+</Frame>`}
+    >
+      {#snippet preview()}
+        <Frame class="w-full max-w-sm">
+          <FramePanel>
+            <div class="p-3.5 text-[13px] font-medium">General</div>
+          </FramePanel>
+          <FramePanel>
+            <div class="p-3.5 text-[13px] font-medium">Backups</div>
+          </FramePanel>
+        </Frame>
+      {/snippet}
+    </DocBlock>
+
+    <Separator />
+
+    <DocBlock
+      name="Settings List"
+      description="Grouped rows for settings pages. Every row keeps the label, explanation and action on one calm line, and collapses to a stacked layout on phones."
+      code={`<SettingsList title="Workspace">
+  <SettingRow label="Members" description="Invite and manage access" href="/members" />
+  <SettingRow label="API keys" description="Create scoped keys" href="/keys" />
+</SettingsList>`}
+    >
+      {#snippet preview()}
+        <SettingsList title="Workspace" class="w-full max-w-md">
+          <SettingRow label="Members" description="Invite and manage access" href="#" />
+          <SettingRow label="API keys" description="Create scoped keys" href="#" />
+        </SettingsList>
+      {/snippet}
+    </DocBlock>
+
+    <Separator />
 
     <DocBlock
       name="Card"

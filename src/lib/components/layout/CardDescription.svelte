@@ -4,6 +4,7 @@
   interface Props { class?: string; children?: Snippet; }
   let { class: className = '', children }: Props = $props();
 </script>
-<p class={cn('text-sm text-[var(--muted-foreground)]', className)}>
+
+<p class={cn('text-[13px] leading-relaxed text-[var(--muted-foreground)]', className)}>
   {#if children}{@render children()}{/if}
 </p>

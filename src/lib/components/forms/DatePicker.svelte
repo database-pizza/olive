@@ -276,9 +276,9 @@
                   class={cn(
                     'flex h-8 w-full items-center justify-center rounded-[var(--radius-button)] text-sm transition-colors duration-[100ms]',
                     sel
-                      ? 'bg-[var(--primary)] text-[var(--primary-foreground)] font-medium'
+                      ? 'bg-[var(--brand)] text-[var(--brand-foreground)] font-medium'
                       : tod
-                        ? 'border border-[var(--primary)] text-[var(--primary)] font-medium hover:bg-[var(--primary)]/10'
+                        ? 'border border-[var(--brand)] text-[var(--brand)] font-medium hover:bg-[var(--brand)]/10'
                         : 'text-[var(--foreground)] hover:bg-[var(--muted)]',
                     dis && 'opacity-30 cursor-not-allowed',
                     !dis && !sel && 'cursor-pointer'

@@ -22,63 +22,61 @@
     label,
     sublabel,
     size = 120,
-    thickness = 10,
+    thickness = 8,
     tone = 'primary',
     class: className = '',
     children,
   }: Props = $props();
 
+  const radius = $derived((size - thickness) / 2);
+  const circumference = $derived(2 * Math.PI * radius);
+  const percent = $derived(max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0);
+  const resolvedTone = $derived<Tone>(percent >= 100 ? 'red' : percent >= 85 ? 'amber' : tone);
+
   const strokes: Record<Tone, string> = {
-    primary: 'var(--primary)',
-    emerald: 'var(--color-emerald-500, #10b981)',
-    amber: 'var(--color-amber-500, #f59e0b)',
-    red: 'var(--color-red-500, #ef4444)',
+    primary: 'var(--brand)',
+    emerald: 'var(--success)',
+    amber: 'var(--warning)',
+    red: 'var(--destructive)',
   };
-
-  let percent = $derived(max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0);
-  let radius = $derived((size - thickness) / 2);
-  let circumference = $derived(2 * Math.PI * radius);
-
-  let resolvedTone = $derived<Tone>(
-    percent >= 100 ? 'red' : percent >= 80 ? 'amber' : tone,
-  );
-
-  let dash = $derived((percent / 100) * circumference);
 </script>
 
-<div class={cn('relative inline-flex items-center justify-center', className)} style={`width:${size}px;height:${size}px`}>
-  <svg width={size} height={size} style={`width:${size}px;height:${size}px`} viewBox={`0 0 ${size} ${size}`} class="-rotate-90">
+<div
+  class={cn('relative inline-flex items-center justify-center', className)}
+  style:width="{size}px"
+  style:height="{size}px"
+>
+  <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} class="-rotate-90" aria-hidden="true">
+    <circle cx={size / 2} cy={size / 2} {radius} fill="none" stroke="var(--muted)" stroke-width={thickness} />
     <circle
       cx={size / 2}
       cy={size / 2}
-      r={radius}
-      fill="none"
-      stroke="var(--muted)"
-      stroke-width={thickness}
-    />
-    <circle
-      cx={size / 2}
-      cy={size / 2}
-      r={radius}
+      {radius}
       fill="none"
       stroke={strokes[resolvedTone]}
       stroke-width={thickness}
       stroke-linecap="round"
-      stroke-dasharray={`${dash} ${circumference}`}
-      class="transition-[stroke-dasharray] duration-500 ease-out"
+      stroke-dasharray={circumference}
+      stroke-dashoffset={circumference - (percent / 100) * circumference}
+      style:transition="stroke-dashoffset 700ms var(--olive-ease-enter), stroke 300ms linear"
     />
   </svg>
+
   <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
     {#if children}
       {@render children()}
     {:else}
-      <span class="text-lg font-semibold tabular-nums text-[var(--foreground)]">{Math.round(percent)}%</span>
+      <span class="olive-tnum text-xl font-semibold tracking-[-0.02em] text-[var(--foreground)]">
+        {Math.round(percent)}<span class="text-sm text-[var(--muted-foreground)]">%</span>
+      </span>
       {#if label}
-        <span class="text-[11px] text-[var(--muted-foreground)]">{label}</span>
-      {/if}
-      {#if sublabel}
-        <span class="text-[10px] text-[var(--muted-foreground)]">{sublabel}</span>
+        <span class="mt-0.5 max-w-[80%] truncate text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--subtle-foreground)]">
+          {label}
+        </span>
       {/if}
     {/if}
   </div>
+  {#if sublabel}
+    <span class="sr-only">{sublabel}</span>
+  {/if}
 </div>

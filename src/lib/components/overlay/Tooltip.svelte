@@ -2,6 +2,7 @@
   import type { Snippet } from 'svelte';
   import { cn } from '$lib/utils/cn.js';
   import { popupElement } from '$lib/utils/popup.js';
+  import { popIn, popOut } from '$lib/utils/transitions.js';
 
   type Side = 'top' | 'bottom' | 'left' | 'right';
 
@@ -13,30 +14,54 @@
     children?: Snippet;
   }
 
-  let { content, side = 'top', delay = 400, class: className = '', children }: Props = $props();
+  let {
+    content,
+    side = 'top',
+    delay = 350,
+    class: className = '',
+    children,
+  }: Props = $props();
 
   let visible = $state(false);
-  let timer: ReturnType<typeof setTimeout>;
+  let wrapperEl = $state<HTMLElement | null>(null);
+  let pos = $state<{ top: number; left: number; placement: Side }>({ top: 0, left: 0, placement: 'top' });
+  let timer: ReturnType<typeof setTimeout> | undefined;
   const componentId = $props.id();
   const tooltipId = `${componentId}-tooltip`;
 
-  function describeTrigger(node: HTMLElement) {
-    const trigger = popupElement(node);
-    const previousDescription = trigger?.getAttribute('aria-describedby');
-    const description = [previousDescription, tooltipId].filter(Boolean).join(' ');
-    trigger?.setAttribute('aria-describedby', description);
+  function measure() {
+    if (!wrapperEl || typeof window === 'undefined') return;
+    const rect = wrapperEl.getBoundingClientRect();
+    const gap = 8;
+    const tooltipWidth = 180;
+    let placement = side;
+    if (side === 'top' && rect.top < 48) placement = 'bottom';
+    if (side === 'bottom' && window.innerHeight - rect.bottom < 48) placement = 'top';
+    if (side === 'left' && rect.left < tooltipWidth) placement = 'right';
+    if (side === 'right' && window.innerWidth - rect.right < tooltipWidth) placement = 'left';
 
-    return {
-      destroy() {
-        if (!trigger) return;
-        if (previousDescription) trigger.setAttribute('aria-describedby', previousDescription);
-        else trigger.removeAttribute('aria-describedby');
-      },
-    };
+    let top = rect.top;
+    let left = rect.left + rect.width / 2;
+    if (placement === 'top') top = rect.top - gap;
+    if (placement === 'bottom') top = rect.bottom + gap;
+    if (placement === 'left') {
+      left = rect.left - gap;
+      top = rect.top + rect.height / 2;
+    }
+    if (placement === 'right') {
+      left = rect.right + gap;
+      top = rect.top + rect.height / 2;
+    }
+
+    pos = { top, left, placement };
   }
 
   function show() {
-    timer = setTimeout(() => { visible = true; }, delay);
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      measure();
+      visible = true;
+    }, delay);
   }
 
   function hide() {
@@ -44,45 +69,68 @@
     visible = false;
   }
 
-  const sideClasses: Record<Side, string> = {
-    top:    'bottom-full left-1/2 -translate-x-1/2 mb-2',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-    left:   'right-full top-1/2 -translate-y-1/2 mr-2',
-    right:  'left-full top-1/2 -translate-y-1/2 ml-2',
-  };
+  function describeTrigger(node: HTMLElement) {
+    const trigger = popupElement(node);
+    const previous = trigger?.getAttribute('aria-describedby');
+    const description = [previous, tooltipId].filter(Boolean).join(' ');
+    trigger?.setAttribute('aria-describedby', description);
+    return {
+      destroy() {
+        if (!trigger) return;
+        if (previous) trigger.setAttribute('aria-describedby', previous);
+        else trigger.removeAttribute('aria-describedby');
+      },
+    };
+  }
+
+  $effect(() => {
+    if (!visible) return;
+    const onViewport = () => measure();
+    document.addEventListener('scroll', onViewport, true);
+    window.addEventListener('resize', onViewport);
+    return () => {
+      document.removeEventListener('scroll', onViewport, true);
+      window.removeEventListener('resize', onViewport);
+    };
+  });
+
+  function portal(node: HTMLElement) {
+    document.body.appendChild(node);
+    return { destroy: () => node.remove() };
+  }
 </script>
 
 <div
+  bind:this={wrapperEl}
   use:describeTrigger
   role="group"
   class={cn('relative inline-flex', className)}
   onmouseenter={show}
   onmouseleave={hide}
-  onfocus={show}
-  onblur={hide}
+  onfocusin={show}
+  onfocusout={hide}
 >
   {#if children}{@render children()}{/if}
+</div>
 
+{#if visible}
   <div
+    use:portal
     id={tooltipId}
     role="tooltip"
-    hidden={!visible}
-    class={cn(
-      'pointer-events-none absolute z-50 whitespace-nowrap',
-      'rounded-[calc(var(--radius)*0.67)] bg-[var(--foreground)] px-2.5 py-1',
-      'text-xs font-medium text-[var(--background)]',
-      'shadow-[var(--shadow-md)]',
-      'animate-[tooltipIn_150ms_cubic-bezier(0.16,1,0.3,1)]',
-      sideClasses[side],
-    )}
+    in:popIn={{ y: 3, duration: 140 }}
+    out:popOut={{ y: 2, duration: 90 }}
+    class="pointer-events-none fixed z-[120] max-w-[min(18rem,calc(100vw-1rem))] whitespace-normal rounded-[var(--radius-sm)] bg-[var(--foreground)] px-2 py-1 text-[11px] font-medium leading-snug text-[var(--background)] shadow-[var(--olive-shadow-md)]"
+    style:top="{pos.top}px"
+    style:left="{pos.left}px"
+    style:transform={pos.placement === 'top'
+      ? 'translate(-50%, -100%)'
+      : pos.placement === 'bottom'
+        ? 'translate(-50%, 0)'
+        : pos.placement === 'left'
+          ? 'translate(-100%, -50%)'
+          : 'translate(0, -50%)'}
   >
     {content}
   </div>
-</div>
-
-<style>
-  @keyframes -global-tooltipIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-</style>
+{/if}

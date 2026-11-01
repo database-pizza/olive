@@ -45,7 +45,7 @@
     'shadow-[var(--shadow-sm)] transition-all duration-[150ms]',
     draggable && 'cursor-grab active:cursor-grabbing',
     dragging && 'opacity-40 scale-[0.98]',
-    'hover:shadow-[var(--shadow-md)] hover:border-[var(--primary)]/30',
+    'hover:shadow-[var(--shadow-md)] hover:border-[var(--brand)]/30',
     className
   )}
 >
@@ -71,7 +71,7 @@
         {/each}
       </div>
       {#if assignee}
-        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--primary)]/20 text-[10px] font-semibold text-[var(--primary)] uppercase">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--brand)]/20 text-[10px] font-semibold text-[var(--brand)] uppercase">
           {assignee.charAt(0)}
         </span>
       {/if}

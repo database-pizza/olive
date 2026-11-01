@@ -86,7 +86,7 @@
           {#each entries as [key, val], i}
             <div class="py-px">
               {#if type === 'object'}
-                <span class="text-[var(--primary)]/80 font-medium">"{key}"</span>
+                <span class="text-[var(--brand)]/80 font-medium">"{key}"</span>
                 <span class="text-[var(--muted-foreground)]">: </span>
               {/if}
               <JsonViewer data={val} depth={depth + 1} {expandDepth} />

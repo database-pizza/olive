@@ -14,13 +14,11 @@
 
 <div class={cn('flex flex-col gap-0.5', className)}>
   {#if label && !collapsed}
-    <p class="mb-1 mt-2 px-2.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)]/60 first:mt-0">
+    <p class="mb-0.5 mt-3 px-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--subtle-foreground)] first:mt-1">
       {label}
     </p>
   {:else if label && collapsed}
-    <div class="my-2 mx-auto h-px w-6 bg-[var(--border)] first:mt-0"></div>
+    <div class="mx-auto my-2 h-px w-5 bg-[var(--sidebar-border)] first:mt-1"></div>
   {/if}
-  {#if children}
-    {@render children()}
-  {/if}
+  {#if children}{@render children()}{/if}
 </div>

@@ -1,5 +1,6 @@
 <script lang="ts" generics="T extends Record<string, unknown>">
   import { cn } from '$lib/utils/cn.js';
+  import SearchInput from '$lib/components/forms/SearchInput.svelte';
 
   type SortDir = 'asc' | 'desc' | null;
 
@@ -80,22 +81,7 @@
 
 <div class={cn('flex flex-col gap-3', className)}>
   {#if searchable}
-    <div class="relative flex items-center">
-      <svg class="pointer-events-none absolute left-3 h-4 w-4 text-[var(--muted-foreground)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-      <input
-        type="text"
-        bind:value={query}
-        placeholder={searchPlaceholder}
-        class={cn(
-          'flex h-9 w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent',
-          'pl-9 pr-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ring)]',
-          'transition-colors duration-[150ms]'
-        )}
-      />
-    </div>
+    <SearchInput bind:value={query} placeholder={searchPlaceholder} />
   {/if}
 
   <div class="overflow-x-auto rounded-[var(--radius)] border border-[var(--border)]">
@@ -186,7 +172,7 @@
               class={cn(
                 'flex h-7 min-w-7 cursor-pointer items-center justify-center rounded-[var(--radius-button)] border px-1.5 text-xs transition-colors',
                 p === page
-                  ? 'border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)] font-medium'
+                  ? 'border-[var(--brand)] bg-[var(--brand)] text-[var(--brand-foreground)] font-medium'
                   : 'border-[var(--border)] hover:bg-[var(--muted)] text-[var(--foreground)]'
               )}
             >{p + 1}</button>

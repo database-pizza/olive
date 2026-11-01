@@ -1,0 +1,529 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Olive theme
+
+   Framework-agnostic layer: base element styles, semantic color classes,
+   motion primitives and small utilities. It contains no Tailwind utilities,
+   so products can import it without importing Tailwind.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Bridge semantic tokens into Tailwind utilities. */
+@theme inline {
+  --font-sans: var(--olive-font-sans);
+  --font-mono: var(--olive-font-mono);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-bright: var(--brand-bright);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-soft: var(--info-soft);
+  --color-debug: var(--debug);
+  --color-debug-soft: var(--debug-soft);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-xs: var(--olive-radius-xs);
+  --radius-sm: var(--olive-radius-sm);
+  --radius-md: var(--olive-radius-md);
+  --radius-lg: var(--olive-radius-lg);
+  --radius-xl: var(--olive-radius-xl);
+  --radius-2xl: var(--olive-radius-2xl);
+  --radius-3xl: var(--olive-radius-3xl);
+
+  --shadow-xs: var(--olive-shadow-xs);
+  --shadow-sm: var(--olive-shadow-sm);
+  --shadow-md: var(--olive-shadow-md);
+  --shadow-lg: var(--olive-shadow-lg);
+  --shadow-popover: var(--olive-shadow-popover);
+
+  --ease-spring: var(--olive-ease-spring);
+  --ease-enter: var(--olive-ease-enter);
+  --ease-exit: var(--olive-ease-exit);
+  --ease-move: var(--olive-ease-move);
+}
+
+@layer base {
+  /* ── Reset and base ───────────────────────────────────────────────────── */
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--olive-text-control);
+    line-height: var(--olive-leading-body);
+    font-optical-sizing: auto;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: var(--olive-tracking-heading);
+    line-height: var(--olive-leading-heading);
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  svg {
+    display: block;
+  }
+
+  ::selection {
+    background: var(--selection);
+  }
+
+  /* :where() keeps component-level outline-none utilities authoritative. */
+  :where(:focus-visible) {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::placeholder {
+    color: var(--subtle-foreground);
+    opacity: 1;
+  }
+
+  /* Scrollbars — thin, only visible on hover, never on touch. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar);
+    border: 2px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-hover);
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* iOS zooms a focused control below 16px. */
+  @media (max-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+
+  @media (pointer: coarse) {
+    button,
+    [role="button"],
+    a,
+    input,
+    select,
+    textarea,
+    summary {
+      touch-action: manipulation;
+    }
+  }
+}
+
+/* ── Semantic badge classes ───────────────────────────────────────────── */
+
+.badge-active,
+.badge-success {
+  background-color: var(--success-soft);
+  color: var(--success-foreground-soft);
+  border-color: color-mix(in oklab, var(--success) 30%, transparent);
+}
+.badge-paused,
+.badge-warning {
+  background-color: var(--warning-soft);
+  color: var(--warning-foreground-soft);
+  border-color: color-mix(in oklab, var(--warning) 32%, transparent);
+}
+.badge-error,
+.badge-delete {
+  background-color: var(--destructive-soft);
+  color: var(--destructive-foreground-soft);
+  border-color: color-mix(in oklab, var(--destructive) 30%, transparent);
+}
+.badge-info,
+.badge-write {
+  background-color: var(--info-soft);
+  color: var(--info-foreground-soft);
+  border-color: color-mix(in oklab, var(--info) 30%, transparent);
+}
+.badge-debug {
+  background-color: var(--debug-soft);
+  color: var(--debug-foreground-soft);
+  border-color: color-mix(in oklab, var(--debug) 30%, transparent);
+}
+.badge-trace {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  border-color: var(--border);
+}
+.dark .badge-active,
+.dark .badge-success {
+  color: var(--success-foreground-soft);
+}
+.dark .badge-paused,
+.dark .badge-warning {
+  color: var(--warning-foreground-soft);
+}
+.dark .badge-error,
+.dark .badge-delete {
+  color: var(--destructive-foreground-soft);
+}
+.dark .badge-info,
+.dark .badge-write {
+  color: var(--info-foreground-soft);
+}
+.dark .badge-debug {
+  color: var(--debug-foreground-soft);
+}
+
+/* ── Semantic alert classes ───────────────────────────────────────────── */
+
+.alert-info {
+  background-color: var(--info-soft);
+  border-color: color-mix(in oklab, var(--info) 30%, transparent);
+  color: var(--info-foreground-soft);
+}
+.alert-success {
+  background-color: var(--success-soft);
+  border-color: color-mix(in oklab, var(--success) 30%, transparent);
+  color: var(--success-foreground-soft);
+}
+.alert-warning {
+  background-color: var(--warning-soft);
+  border-color: color-mix(in oklab, var(--warning) 32%, transparent);
+  color: var(--warning-foreground-soft);
+}
+.alert-error {
+  background-color: var(--destructive-soft);
+  border-color: color-mix(in oklab, var(--destructive) 30%, transparent);
+  color: var(--destructive-foreground-soft);
+}
+
+/* ── Chrome ───────────────────────────────────────────────────────────── */
+
+.olive-glass {
+  background-color: color-mix(in oklab, var(--background) 78%, transparent);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+
+.olive-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--olive-radius-xl);
+  box-shadow: var(--olive-shadow-xs), var(--olive-inset-highlight);
+}
+
+.olive-hairline {
+  border-color: var(--border);
+}
+
+.olive-drafting-grid {
+  background-image: radial-gradient(
+    circle at center,
+    color-mix(in oklab, var(--foreground) 13%, transparent) 1px,
+    transparent 1.2px
+  );
+  background-size: 1.25rem 1.25rem;
+  background-position: center;
+}
+
+/* ── Utilities ────────────────────────────────────────────────────────── */
+
+.olive-focus/* :where() keeps component-level outline-none utilities authoritative. */
+:where(:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.olive-tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.olive-mono {
+  font-family: var(--font-mono);
+  font-size: 0.8125em;
+  letter-spacing: -0.01em;
+}
+
+.olive-press {
+  transition:
+    transform var(--olive-duration-fast) var(--olive-ease-spring),
+    background-color var(--olive-duration-fast) var(--olive-ease-move),
+    border-color var(--olive-duration-fast) var(--olive-ease-move),
+    color var(--olive-duration-fast) var(--olive-ease-move),
+    box-shadow var(--olive-duration-fast) var(--olive-ease-move),
+    opacity var(--olive-duration-fast) var(--olive-ease-move);
+  will-change: transform;
+}
+.olive-press:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: scale(var(--olive-press-scale));
+}
+
+.olive-lift {
+  transition:
+    transform var(--olive-duration-base) var(--olive-ease-enter),
+    box-shadow var(--olive-duration-base) var(--olive-ease-enter),
+    border-color var(--olive-duration-base) var(--olive-ease-enter);
+}
+@media (hover: hover) {
+  .olive-lift:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--olive-shadow-sm);
+  }
+}
+
+.olive-scroll {
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.olive-no-scrollbar {
+  scrollbar-width: none;
+}
+.olive-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.olive-fade-r {
+  mask-image: linear-gradient(to right, black calc(100% - 1.75rem), transparent);
+}
+
+@media (min-width: 1024px) {
+  .olive-fade-r {
+    mask-image: none;
+  }
+}
+
+.olive-mask-fade-y {
+  mask-image: linear-gradient(to bottom, transparent, black 12px, black calc(100% - 12px), transparent);
+}
+
+.olive-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.olive-safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.olive-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A quiet top highlight that gives raised surfaces a physical edge. */
+.olive-sheen {
+  position: relative;
+}
+.olive-sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--olive-inset-highlight);
+}
+
+/* Reveal children in sequence. */
+.olive-reveal > * {
+  animation: olive-fade-up var(--olive-duration-base) var(--olive-ease-enter) both;
+}
+.olive-reveal > *:nth-child(2) { animation-delay: 35ms; }
+.olive-reveal > *:nth-child(3) { animation-delay: 70ms; }
+.olive-reveal > *:nth-child(4) { animation-delay: 105ms; }
+.olive-reveal > *:nth-child(5) { animation-delay: 140ms; }
+.olive-reveal > *:nth-child(6) { animation-delay: 175ms; }
+.olive-reveal > *:nth-child(7) { animation-delay: 210ms; }
+.olive-reveal > *:nth-child(n + 8) { animation-delay: 245ms; }
+
+/* ── Keyframes ────────────────────────────────────────────────────────── */
+
+@keyframes olive-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes olive-fade-up {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes olive-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes olive-sheet-in-right {
+  from { transform: translate3d(100%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes olive-sheet-in-left {
+  from { transform: translate3d(-100%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes olive-sheet-in-bottom {
+  from { transform: translate3d(0, 100%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes olive-toast-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0) scale(0.98); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes olive-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@keyframes olive-pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.92); }
+}
+
+@keyframes olive-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes olive-draw-check {
+  from { stroke-dashoffset: 20; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes olive-liquid {
+  0% { transform: scaleX(1); }
+  35% { transform: scaleX(1.18); }
+  70% { transform: scaleX(0.94); }
+  100% { transform: scaleX(1); }
+}
+
+@keyframes olive-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -3px, 0); }
+}
+
+@keyframes olive-shake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-4px, 0, 0); }
+  40% { transform: translate3d(4px, 0, 0); }
+  60% { transform: translate3d(-3px, 0, 0); }
+  80% { transform: translate3d(2px, 0, 0); }
+}
+
+@keyframes olive-ripple {
+  from { opacity: 0.35; transform: scale(0); }
+  to { opacity: 0; transform: scale(2.4); }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
