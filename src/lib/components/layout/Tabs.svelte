@@ -134,8 +134,8 @@
         disabled={tab.disabled}
         onclick={() => select(tab.id)}
         class={cn(
-          'relative z-10 flex h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-sm)] px-3',
-          'text-[13px] font-medium outline-none transition-colors duration-[var(--duration-fast)]',
+          'relative z-10 flex h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-sm)] px-1.5 max-[380px]:px-1',
+          'text-[12.5px] font-medium outline-none transition-colors duration-[var(--duration-fast)] sm:px-3 sm:text-[13px]',
           'focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1',
           'focus-visible:ring-offset-[var(--background)]',
           'disabled:cursor-not-allowed disabled:opacity-40',

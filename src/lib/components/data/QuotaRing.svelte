@@ -47,11 +47,11 @@
   style:height="{size}px"
 >
   <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} class="-rotate-90" aria-hidden="true">
-    <circle cx={size / 2} cy={size / 2} {radius} fill="none" stroke="var(--muted)" stroke-width={thickness} />
+    <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="var(--muted)" stroke-width={thickness} />
     <circle
       cx={size / 2}
       cy={size / 2}
-      {radius}
+      r={radius}
       fill="none"
       stroke={strokes[resolvedTone]}
       stroke-width={thickness}
