@@ -53,7 +53,7 @@
         <dt class="shrink-0 text-xs text-[var(--muted-foreground)]">{field.label}</dt>
         <dd class="flex min-w-0 items-center gap-1.5 sm:justify-end">
           <span class={cn(
-            'truncate text-left text-xs text-[var(--foreground)] sm:text-right',
+            'break-all text-left text-xs text-[var(--foreground)] sm:truncate sm:break-normal sm:text-right',
             field.mono && 'font-mono',
           )}>{field.value}</span>
           {#if field.copy}
